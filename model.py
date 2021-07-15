@@ -1,4 +1,6 @@
 import random
+import json
+import hashlib
 
 class RPS:
     def __init__(self, computer_ai=None):
@@ -93,3 +95,72 @@ class RPS_controller:
     def play(self, game_id, player_choice):
         game = self.games[game_id]
         game.play(player_choice)
+
+class User:
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password # Hashed 
+
+    @staticmethod
+    def get_user_data_file(username):
+        return f"{username}.json"
+    
+    def toDict(self):
+        return {'username' : self.username, 'password' : self.password}
+
+    def save_user_to_file(self):
+        with open(User.get_user_data_file(self.username), 'w') as File:
+            json.dump(self.toDict(), File, ensure_ascii=False, indent=4)
+        
+    @staticmethod
+    def load_user_from_file(username):
+        try:
+            with open(User.get_user_data_file(username)) as File:
+                data_dict = json.load(File)
+
+                uname = data_dict['username']
+                passwd = data_dict['password']
+
+                return User(uname, passwd)
+        except FileNotFoundError:
+            print(f'File for user {username} not found.')
+            return None
+    
+    @staticmethod
+    def register(username, password_cleartext):
+        if User.load_user_from_file(username) is not None:
+            raise ValueError('Username already taken.')
+        else:
+            password = User._hash_password(password_cleartext)
+            user = User(username, password)
+            user.save_user_to_file()
+            return user
+    @staticmethod
+    def login(username, password_cleartext):
+        try:
+            user = User.load_user_from_file(username)
+
+            if user.check_password(password_cleartext):
+                return user
+            else:
+                # For security reasons we don't want to give feedback as to whether the user or the password was incorect
+                # as it prevents people from finding out all the usernames on our website
+                raise ValueError("Username or password do not match.")
+        
+        except AttributeError: # If User.load_user_from_file returns None
+           # For security reasons we don't want to give feedback as to whether the user or the password was incorect
+           # as it prevents people from finding out all the usernames on our website
+            raise ValueError("Username or password do not match.")
+    
+    @staticmethod
+    def _hash_password(password_cleartext, salt=None):
+        if salt is None:
+            salt = str(random.getrandbits(32))
+        salted_pswd = salt + password_cleartext
+        h = hashlib.blake2b()
+        h.update(salted_pswd.encode(encoding='utf-8'))
+        return f"{salt}${h.hexdigest()}"
+    
+    def check_password(self, password_cleartext):
+        salt, _ = self.password.split('$')
+        return self.password == User._hash_password(password_cleartext, salt) 
