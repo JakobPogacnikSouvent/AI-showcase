@@ -8,10 +8,10 @@ USERNAME_COOKIE = "username"
 COOKIE_SECRET = 'A common mistake that people make when trying to design something completely foolproof is to underestimate the ingenuity of complete fools.'
 
 @bottle.get('/')
-def hello_world():
+def home():
     user = get_current_user() # Also validates login
 
-    return bottle.template('hello_world.html', user=user)
+    return bottle.template('home2.html', user=user)
 
 def validate_login():
     username = bottle.request.get_cookie(USERNAME_COOKIE, secret=COOKIE_SECRET)
@@ -32,8 +32,10 @@ def nova_igra():
 
 @bottle.get('/rps/<game_id:int>/')
 def rps(game_id):
+    user = get_current_user() # Also validates login
+
     game = rps_controller.games[game_id]
-    return bottle.template('rps.tpl', game=game, game_id=game_id)
+    return bottle.template('rps.html', game=game, game_id=game_id, user=user)
 
 @bottle.post('/rps/<game_id:int>/')
 def rps_update(game_id):
@@ -47,8 +49,8 @@ def login_get():
 
 @bottle.post('/login/')
 def login_post():
-    password_cleartext = bottle.request.forms.get('password')
-    username = bottle.request.forms.get('username')
+    password_cleartext = bottle.request.params.get('password')
+    username = bottle.request.params.get('username')
     
     if not username or not password_cleartext:
         return bottle.template('login.html', error='Please input username or password.')
@@ -89,6 +91,15 @@ def register_post():
     except ValueError as e:
         return bottle.template('register.html', error=e)
 
+@bottle.get('/test/')
+def test():
+    return bottle.template('imagetest.html')
+
+@bottle.route('/static/<picture>')
+def serve_picture(picture):
+    return bottle.static_file(picture, root='static')
+
+
 # Bottle apparently has some pathing problems on windows as per https://stackoverflow.com/questions/18460924/bottlepy-template-not-found
 # so we determine relative path to 'views' directory at runtime
 
@@ -96,4 +107,5 @@ def register_post():
 # abs_views_path = os.path.join(abs_app_dir_path, 'views')
 # bottle.TEMPLATE_PATH.insert(0, 'views' )
 
-bottle.run(reloader=True)
+if __name__ == '__main__':
+    bottle.run(reloader=True)
