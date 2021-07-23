@@ -2,49 +2,40 @@
 
 <div class="container">
     <div class="section">
-    <div class="columns">
-        <div class="column has-text-centered">
-        <h1 class="title" style="color: black;">Bulma Card Layout Template</h1><br>
-        </div>
-    </div>
-    <div id="app" class="row columns is-multiline">
-        <div v-for="card in cardData" key="card.id" class="column is-4">
-        <div class="card large">
-            <div class="card-image">
-                <figure class="image is-16by9">
-                    <img src="/static/rps.png" alt="Image">
-                </figure>
-            </div>
 
-            <div class="card-content">
-                <div class="media">
-                    <div class="media-content">
-                        <p class="title is-4 no-padding">Rock Paper Scissors</p>
+        <div class="columns">
+            <div class="column has-text-centered">
+                <h1 class="title" style="color: black;">Bulma Card Layout Template</h1><br>
+            </div>
+        </div>
+
+        <div class="columns is-multiline">
+            <div class="column is-4">
+                <div class="card large">
+
+                    <div class="card-image">
+                        <figure class="image is-16by9">
+                            <img src="/static/rps.png" alt="Image">
+                        </figure>
                     </div>
-                </div>
-                
-                <div class="content">
-                        Play the classic game of rock paper scissors agains a computer AI.
-                        <form action="/rps/" method="post">
-                            <button type="submit">Rock, Paper, Scissors</button>
-                        </form>
+
+                    <div class="card-content">
+                        <div class="media">
+                            <div class="media-content">
+                                <p class="title is-4 no-padding">Rock Paper Scissors</p>
+                            </div>
+                        </div>
+                        
+                        <div class="content">
+                            Play the classic game of rock paper scissors agains a computer AI.
+                            <form action="/rps/" method="post">
+                                <button type="submit">Rock, Paper, Scissors</button>
+                            </form>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
-        </div>
-    </div>
     </div>
 </div>
-
-<script src="../js/cardsData.js"></script>
-
-<!-- Using Vue to populate cards to reduce redundant code -->
-<script>
-    var app = new Vue({
-    el: '#app',
-    data: {
-        cardData: cardsData
-    }
-    })
-
-</script>

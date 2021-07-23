@@ -35,7 +35,7 @@ def rps(game_id):
     user = get_current_user() # Also validates login
 
     game = rps_controller.games[game_id]
-    return bottle.template('rps.html', game=game, game_id=game_id, user=user)
+    return bottle.template('rps2.html', game=game, game_id=game_id, user=user)
 
 @bottle.post('/rps/<game_id:int>/')
 def rps_update(game_id):
