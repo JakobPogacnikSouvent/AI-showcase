@@ -181,15 +181,22 @@ class TIAR: #Three In A Row
         # Make move
         self.board[x][y] = player
         
-        # Check if the move results in game ending
-        if (winner := self._check_game_end()):
-            self.winner = winner
-            return winner
+        # Update winner
+        self.winner = self._check_game_end() # If there is no winner _check_game_end returns None
+        return self.winner
 
     def is_valid_move(self, x, y):
         return not self.board[x][y]
 
     def _check_game_end(self):
+        """
+        Check current board state if the game is over.
+        returns:
+            1 : if P1 won
+            2 : if CPU won
+            3 : if game is a draw
+            None : if no winner and game is not over
+        """
 
         # Check all rows
         for row in self.board:
@@ -232,10 +239,7 @@ class TIAR: #Three In A Row
             x = random.randint(0,2)
             y = random.randint(0,2)
 
-
-        if (winner := self.play(x, y, 2)): # self.play checks if game is over
-            return winner
-
+        return self.play(x, y, 2) # Return winner
 
 class TIAR_controller:
     def __init__(self):
@@ -262,6 +266,7 @@ class TIAR_controller:
         If neither player nor ai move results in victory it returns None.
 
         If the game with game_id has alredy concluded it returns its winner.
+        If the player move is invalid it returns None
         """
 
 
@@ -294,3 +299,160 @@ class TIAR_controller:
             new_id = max(self.games.keys()) + 1
         
         return new_id
+
+class FIAR:
+    def __init__(self):
+        # The board is represented as such [[column1], [column2], ... , [column7]] each column having 6 rows
+        # The left most number in a column represents the bottom most space
+        self.board = [[0 for i in range(6)] for j in range(7)]
+
+        self.winner = None
+        self.ai
+
+    def _random_AI(self):
+        column = random.randint(0, 7)
+        
+        while not self.is_valid_move(column):
+            column = random.randint(0, 7)
+        
+        return self.play(column, 2)
+
+    def play(self, col, player):
+        # If the game is already finished return winner
+        if self.winner is not None:
+            return self.winner
+
+        column = self.board[col]
+        for row in range(len(column)):
+            if column[row] == 0:
+                column[row] = player # Column is a reference so this will mutate self.board[col]
+                
+                # Update winner
+                self.winner = self._check_game_end(col, row) # If there is no winner _check_game_end returns None
+                return self.winner
+    
+    def _check_game_end(self, col, row, player):
+        """
+        Check if the last move cause the game to end.
+        
+        args:
+            x, y : coords of last played move. The game will only end if the newly played move is included in the winning 4 in a row combination
+            player : the player that caused the last move to happen (1=P1, 2=CPU)
+
+        returns:
+            1 : if P1 won
+            2 : if CPU won
+            3 : if game is a draw
+            None : if no winner and game is not over
+        """
+        
+        # Check vertical
+        if row >= 3: # Verticall 4 in a row is only possible if we are high enough
+            if len({self.board[col][row - i] for i in range(3)}) == 1: # See if four stones below are the same
+                return player
+
+        # Check horizontal
+        r, c = row, col
+        while c > 0 and self.board[c-1][r] == player:
+            c -= 1
+        
+        try:
+            if len({self.board[c + i][r] for i in range(3)}) == 1:
+                return player
+        except IndexError: # If you go out of range in list comprehension
+            pass
+
+        # Check first diagonal
+        r, c = row, col
+        while c > 0 and r > 0 and self.board[c-1][r-1] == player:
+            r -= 1
+            c -= 1
+        
+        try:
+            if len({self.board[c+i][r+i] for i in range(3)}) == 1:
+                return player
+        except IndexError:
+            pass
+
+        # Check second diagonal
+        r, c = row, col
+        while c < 6 and r > 0 and self.board[c+1][r-1] == player:
+            r -= 1
+            c += 1
+        
+        try:
+            if len({self.board[c-i][r+i] for i in range(3)}) == 1:
+                return player
+        except IndexError:
+            pass
+
+        # Check if board is full
+        for column in self.board:
+            if 0 in column:
+                return None
+        
+        # If board is full
+        return 3
+
+    def is_valid_move(self, column):
+        return 0 in column
+
+class FIAR_controller:
+    def __init__(self):
+        self.games = {} # dict of <id, FIAR>
+
+    def new_game(self, starting_player=1):
+        # For staring player 1=P1, 2=CPU
+
+        game_id = self._get_new_id()
+        game = FIAR()
+        self.games[game_id] = game
+        
+        if starting_player == 2:
+            # If starting player is computer make the first move
+
+            game.ai() # No need to check for winner on the first move
+        
+        return game_id
+
+    def player_play(self, game_id, col):
+        """
+        Makes the player move in the game with game_id.
+        If the player move does not result in victory it makes the ai move.
+        If neither player nor ai move results in victory it returns None.
+
+        If the game with game_id has alredy concluded it returns its winner.
+        If the player move is invalid it returns None
+        """
+
+
+        # If the game has already ended return winner
+        if self.games[game_id].winner is not None:
+            return self.games[game_id].winner
+
+        # If move is invalid return None
+        if not self.games[game_id].is_valid_move(col):
+            return None
+
+        # If player makes a winning move return a winner
+        if (winner := self.games[game_id].play(col, 1)): # 1=P1, 2=CPU
+            return winner
+        
+        # If there is no winner after player move make AI move
+        else:
+
+            # If AI make a winning move return a winner
+            if (winner := self.games[game_id].ai()):
+                return winner
+        
+        # If neither player or AI wins return None
+        return None
+
+    def _get_new_id(self):
+        if not self.games:
+            new_id = 0
+        else:
+            new_id = max(self.games.keys()) + 1
+        
+        return new_id
+        
