@@ -1,0 +1,35 @@
+% rebase('base.html')
+
+% import model
+
+<div class="container">
+    <div class="section">
+        
+        <div class="columns">
+            <div class="column has-text-centered">
+                <h1>Three in a row</h1>
+            </div>
+        </div>
+
+        <div>
+            <h2>WINNER: {{game.winner}}</h2>
+        </div>
+
+
+        % for row in range(len(game.board)):
+        <div class=" columns">
+                % for column in range(len(game.board[row])):
+                <div class="column">
+                    <form action="/tiar/{{game_id}}/" method="post">
+                        <input type="hidden" name='coords' value='{{row}},{{column}}'>
+                        <button type="submit">{{game.board[row][column]}}</button>
+                    </form>
+                </div>
+                % end
+            </div>
+        % end
+
+    </div>
+</div>
+
+

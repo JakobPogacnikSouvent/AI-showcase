@@ -1,8 +1,9 @@
 import bottle
 import os
-from model import RPS_controller, User
+from model import RPS_controller, TIAR_controller, User
 
 rps_controller = RPS_controller()
+tiar_controller = TIAR_controller()
 
 USERNAME_COOKIE = "username"
 COOKIE_SECRET = 'A common mistake that people make when trying to design something completely foolproof is to underestimate the ingenuity of complete fools.'
@@ -25,9 +26,9 @@ def get_current_user():
     return username
 
 @bottle.post('/rps/')
-def nova_igra():
+def rps_new_game():
+    user = get_current_user() # Also validates login
     game_id = rps_controller.new_game()
-    print('redirecting')
     bottle.redirect(f'/rps/{game_id}/')
 
 @bottle.get('/rps/<game_id:int>/')
@@ -42,6 +43,25 @@ def rps_update(game_id):
     player_choice = bottle.request.forms.get('player_choice')
     rps_controller.play(game_id, player_choice)
     bottle.redirect(f'/rps/{game_id}/')
+
+@bottle.post('/tiar/')
+def tiar_new_game():
+    user = get_current_user() # Also validates login
+    game_id = tiar_controller.new_game()
+    bottle.redirect(f'/tiar/{game_id}/')
+
+@bottle.get('/tiar/<game_id:int>/')
+def tiar(game_id):
+    user = get_current_user() # Also validates login
+
+    game = tiar_controller.games[game_id]
+    return bottle.template('tiar.html', game=game, game_id=game_id, user=user)
+
+@bottle.post('/tiar/<game_id:int>/')
+def tiar_update(game_id):
+    x, y = list(map(int, bottle.request.forms.get('coords').split(',')))
+    tiar_controller.player_play(game_id, x, y)
+    bottle.redirect(f'/tiar/{game_id}/')
 
 @bottle.get('/login/')
 def login_get():
