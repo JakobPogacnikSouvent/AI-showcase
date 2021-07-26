@@ -2,6 +2,14 @@ import random
 import json
 import hashlib
 
+"""
+TODO:
+    Create parent class for game controllers
+    Use *args and *kwargs to pass variables to play functions
+
+    Games need to be player specific
+"""
+
 class RPS:
     def __init__(self, computer_ai=None):
         # For internal logic numbers are used to represent rock, paper and scissors
@@ -307,13 +315,13 @@ class FIAR:
         self.board = [[0 for i in range(6)] for j in range(7)]
 
         self.winner = None
-        self.ai
+        self.ai = self._random_AI
 
     def _random_AI(self):
-        column = random.randint(0, 7)
+        column = random.randint(0, 6)
         
         while not self.is_valid_move(column):
-            column = random.randint(0, 7)
+            column = random.randint(0, 6)
         
         return self.play(column, 2)
 
@@ -328,7 +336,7 @@ class FIAR:
                 column[row] = player # Column is a reference so this will mutate self.board[col]
                 
                 # Update winner
-                self.winner = self._check_game_end(col, row) # If there is no winner _check_game_end returns None
+                self.winner = self._check_game_end(col, row, player) # If there is no winner _check_game_end returns None
                 return self.winner
     
     def _check_game_end(self, col, row, player):
@@ -348,16 +356,16 @@ class FIAR:
         
         # Check vertical
         if row >= 3: # Verticall 4 in a row is only possible if we are high enough
-            if len({self.board[col][row - i] for i in range(3)}) == 1: # See if four stones below are the same
+            if len({self.board[col][row - i] for i in range(4)}) == 1: # See if four stones below are the same
                 return player
 
         # Check horizontal
         r, c = row, col
         while c > 0 and self.board[c-1][r] == player:
             c -= 1
-        
+        print(r, c)
         try:
-            if len({self.board[c + i][r] for i in range(3)}) == 1:
+            if len({self.board[c + i][r] for i in range(4)}) == 1:
                 return player
         except IndexError: # If you go out of range in list comprehension
             pass
@@ -369,7 +377,7 @@ class FIAR:
             c -= 1
         
         try:
-            if len({self.board[c+i][r+i] for i in range(3)}) == 1:
+            if len({self.board[c+i][r+i] for i in range(4)}) == 1:
                 return player
         except IndexError:
             pass
@@ -381,7 +389,7 @@ class FIAR:
             c += 1
         
         try:
-            if len({self.board[c-i][r+i] for i in range(3)}) == 1:
+            if len({self.board[c-i][r+i] for i in range(4)}) == 1:
                 return player
         except IndexError:
             pass
@@ -395,7 +403,7 @@ class FIAR:
         return 3
 
     def is_valid_move(self, column):
-        return 0 in column
+        return 0 in self.board[column]
 
 class FIAR_controller:
     def __init__(self):

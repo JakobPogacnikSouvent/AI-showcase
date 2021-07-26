@@ -1,0 +1,46 @@
+% rebase('base.html')
+
+% import model
+
+<div class="container">
+    <div class="section">
+        
+        <div class="columns">
+            <div class="column has-text-centered">
+                <h1>Four in a row</h1>
+            </div>
+        </div>
+
+        <div>
+            <h2>WINNER: {{game.winner}}</h2>
+        </div>
+
+
+        <div>
+            <table class="table">
+                <tr>
+                    % for column_index in range(7):
+                        <th>
+                            <form action="/fiar/{{game_id}}/" method="post">
+                                <input type="hidden" name='column' value='{{ column_index }}'>
+                                <button type="submit">↓</button>
+                            </form>
+                        </th>
+                    % end
+                </tr>
+
+                % for row_index in range(1,7):
+                    <tr>
+                        % for column_index in range(7):
+                            <td>
+                                {{ game.board[column_index][-row_index] }}
+                            </td>
+                        % end
+                    </tr>
+                % end
+                
+            </table>
+        </div>
+
+    </div>
+</div>

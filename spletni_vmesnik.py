@@ -1,9 +1,10 @@
 import bottle
 import os
-from model import RPS_controller, TIAR_controller, User
+from model import RPS_controller, TIAR_controller, FIAR_controller, User
 
 rps_controller = RPS_controller()
 tiar_controller = TIAR_controller()
+fiar_controller = FIAR_controller()
 
 USERNAME_COOKIE = "username"
 COOKIE_SECRET = 'A common mistake that people make when trying to design something completely foolproof is to underestimate the ingenuity of complete fools.'
@@ -63,6 +64,25 @@ def tiar_update(game_id):
     tiar_controller.player_play(game_id, x, y)
     bottle.redirect(f'/tiar/{game_id}/')
 
+@bottle.post('/fiar/')
+def fiar_new_game():
+    user = get_current_user() # Also validates login
+    game_id = fiar_controller.new_game()
+    bottle.redirect(f'/fiar/{game_id}/')
+
+@bottle.get('/fiar/<game_id:int>/')
+def fiar(game_id):
+    user = get_current_user() # Also validates login
+
+    game = fiar_controller.games[game_id]
+    return bottle.template('fiar.html', game=game, game_id=game_id, user=user)
+
+@bottle.post('/fiar/<game_id:int>/')
+def fiar_update(game_id):
+    column = int(bottle.request.forms.get('column'))
+    fiar_controller.player_play(game_id, column)
+    bottle.redirect(f'/fiar/{game_id}/')
+
 @bottle.get('/login/')
 def login_get():
     return bottle.template('login.html', error=None)
@@ -84,7 +104,6 @@ def login_post():
         bottle.redirect("/")
     except ValueError as e:
         return bottle.template('login.html', error=e)
-
 
 @bottle.post('/logout/')
 def logout_post():
