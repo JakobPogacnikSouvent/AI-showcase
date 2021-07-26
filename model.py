@@ -4,13 +4,86 @@ import hashlib
 
 """
 TODO:
-    Create parent class for game controllers
-    Use *args and *kwargs to pass variables to play functions
-
     Games need to be player specific
 """
 
-class RPS:
+class GameController:
+    def __init__(self, GameClass):
+        self.games = {} # dict of <id, Game object>
+        self.game_class = GameClass
+
+    def _get_new_id(self):
+        if not self.games:
+            new_id = 0
+        else:
+            new_id = max(self.games.keys()) + 1
+        
+        return new_id
+
+    def new_game(self, starting_player=1):
+        # For staring player 1=P1, 2=CPU
+
+        game_id = self._get_new_id()
+        game = self.game_class()
+
+        self.games[game_id] = game
+        
+        if starting_player == 2:
+            # If starting player is computer make the first move
+
+            game.ai() # No need to check for winner on the first move
+        
+        return game_id
+
+    def player_play(self, game_id, *args):
+        """
+        Makes the player move in the game with game_id.
+        If the player move does not result in victory it makes the ai move.
+        If neither player nor ai move results in victory it returns None.
+
+        If the game with game_id has alredy concluded it returns its winner.
+        If the player move is invalid it returns None
+        """
+
+
+        # If the game has already ended return winner
+        if self.games[game_id].winner is not None:
+            return self.games[game_id].winner
+
+        # If move is invalid return None
+        if not self.games[game_id].is_valid_move(*args):
+            return None
+
+        # If player makes a winning move return a winner
+        if (winner := self.games[game_id].play(1, *args)): # 1=P1, 2=CPU
+            return winner
+        
+        # If there is no winner after player move make AI move
+        else:
+
+            # If AI make a winning move return a winner
+            if (winner := self.games[game_id].ai()):
+                return winner
+        
+        # If neither player or AI wins return None
+        return None
+
+class GameTemplate:
+    """
+    Template object for Game inheritance that contains all functions needed in GameController.
+    """
+    def __init__(self, computer_ai):
+        self.winner = None
+        self.ai = computer_ai
+    
+    def is_valid_move(self, *args):
+        # If game does not have this function it means that it has no need to check whether moves are valid and therefore all moves are valid.
+        return True
+    
+    def play(self):
+        return self.winner
+
+class RPS(GameTemplate):
     def __init__(self, computer_ai=None):
         # For internal logic numbers are used to represent rock, paper and scissors
         #
@@ -78,29 +151,16 @@ class RPS:
         # Will open file and update the winner
         pass
 
-class RPS_controller:
+class RPS_controller(GameController):
     """
     A class that enables and handles running of multiple RPS game instances.
     """
 
     def __init__(self):
         self.games = {} # dict of <id, RPS>
+        self.game_class = RPS
 
-    def new_game(self):
-        game_id = self._get_new_id()
-        game = RPS()
-        self.games[game_id] = game
-        return game_id
-
-    def _get_new_id(self):
-        if not self.games:
-            new_id = 0
-        else:
-            new_id = max(self.games.keys()) + 1
-        
-        return new_id
-
-    def play(self, game_id, player_choice):
+    def player_play(self, game_id, player_choice):
         self.games[game_id].play(player_choice)
 
 class User:
@@ -172,15 +232,13 @@ class User:
         salt, _ = self.password.split('$')
         return self.password == User._hash_password(password_cleartext, salt)
 
-class TIAR: #Three In A Row
-    def __init__(self, computer_ai = None):
+class TIAR(GameTemplate): #Three In A Row
+    def __init__(self, computer_ai=None):
+        super().__init__(computer_ai or self._random_AI)
+
         self.board = [[0 for i in range(3)] for j in range(3)] # 3x3 board 0=empty, 1=player, 2=CPU
-        
-        self.winner = None
 
-        self.ai = computer_ai or self._random_AI
-
-    def play(self, x, y, player):
+    def play(self, player, x, y):
 
         # If the game has already ended return winner
         if self.winner is not None:
@@ -247,75 +305,15 @@ class TIAR: #Three In A Row
             x = random.randint(0,2)
             y = random.randint(0,2)
 
-        return self.play(x, y, 2) # Return winner
+        return self.play(2, x, y) # Return winner
 
-class TIAR_controller:
-    def __init__(self):
-        self.games = {} # dict of <id, TIAR>
+class FIAR(GameTemplate):
+    def __init__(self, computer_ai=None):
+        super().__init__(computer_ai or self._random_AI)
 
-    def new_game(self, starting_player=1):
-        # For staring player 1=P1, 2=CPU
-
-        game_id = self._get_new_id()
-        game = TIAR()
-        self.games[game_id] = game
-        
-        if starting_player == 2:
-            # If starting player is computer make the first move
-
-            game.ai() # No need to check for winner on the first move
-        
-        return game_id
-
-    def player_play(self, game_id, x, y):
-        """
-        Makes the player move in the game with game_id.
-        If the player move does not result in victory it makes the ai move.
-        If neither player nor ai move results in victory it returns None.
-
-        If the game with game_id has alredy concluded it returns its winner.
-        If the player move is invalid it returns None
-        """
-
-
-        # If the game has already ended return winner
-        if self.games[game_id].winner is not None:
-            return self.games[game_id].winner
-
-        # If move is invalid return None
-        if not self.games[game_id].is_valid_move(x,y):
-            return None
-
-        # If player makes a winning move return a winner
-        if (winner := self.games[game_id].play(x, y, 1)): # 1=P1, 2=CPU
-            return winner
-        
-        # If there is no winner after player move make AI move
-        else:
-
-            # If AI make a winning move return a winner
-            if (winner := self.games[game_id].ai()):
-                return winner
-        
-        # If neither player or AI wins return None
-        return None
-
-    def _get_new_id(self):
-        if not self.games:
-            new_id = 0
-        else:
-            new_id = max(self.games.keys()) + 1
-        
-        return new_id
-
-class FIAR:
-    def __init__(self):
         # The board is represented as such [[column1], [column2], ... , [column7]] each column having 6 rows
         # The left most number in a column represents the bottom most space
         self.board = [[0 for i in range(6)] for j in range(7)]
-
-        self.winner = None
-        self.ai = self._random_AI
 
     def _random_AI(self):
         column = random.randint(0, 6)
@@ -323,9 +321,9 @@ class FIAR:
         while not self.is_valid_move(column):
             column = random.randint(0, 6)
         
-        return self.play(column, 2)
+        return self.play(2, column)
 
-    def play(self, col, player):
+    def play(self, player, col):
         # If the game is already finished return winner
         if self.winner is not None:
             return self.winner
@@ -405,6 +403,66 @@ class FIAR:
     def is_valid_move(self, column):
         return 0 in self.board[column]
 
+'''
+class TIAR_controller:
+    def __init__(self):
+        self.games = {} # dict of <id, TIAR>
+
+    def new_game(self, starting_player=1):
+        # For staring player 1=P1, 2=CPU
+
+        game_id = self._get_new_id()
+        game = TIAR()
+        self.games[game_id] = game
+        
+        if starting_player == 2:
+            # If starting player is computer make the first move
+
+            game.ai() # No need to check for winner on the first move
+        
+        return game_id
+
+    def player_play(self, game_id, x, y):
+        """
+        Makes the player move in the game with game_id.
+        If the player move does not result in victory it makes the ai move.
+        If neither player nor ai move results in victory it returns None.
+
+        If the game with game_id has alredy concluded it returns its winner.
+        If the player move is invalid it returns None
+        """
+
+
+        # If the game has already ended return winner
+        if self.games[game_id].winner is not None:
+            return self.games[game_id].winner
+
+        # If move is invalid return None
+        if not self.games[game_id].is_valid_move(x,y):
+            return None
+
+        # If player makes a winning move return a winner
+        if (winner := self.games[game_id].play(x, y, 1)): # 1=P1, 2=CPU
+            return winner
+        
+        # If there is no winner after player move make AI move
+        else:
+
+            # If AI make a winning move return a winner
+            if (winner := self.games[game_id].ai()):
+                return winner
+        
+        # If neither player or AI wins return None
+        return None
+
+    def _get_new_id(self):
+        if not self.games:
+            new_id = 0
+        else:
+            new_id = max(self.games.keys()) + 1
+        
+        return new_id
+
 class FIAR_controller:
     def __init__(self):
         self.games = {} # dict of <id, FIAR>
@@ -463,4 +521,4 @@ class FIAR_controller:
             new_id = max(self.games.keys()) + 1
         
         return new_id
-        
+'''

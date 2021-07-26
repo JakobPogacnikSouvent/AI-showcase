@@ -1,10 +1,10 @@
 import bottle
 import os
-from model import RPS_controller, TIAR_controller, FIAR_controller, User
+from model import *
 
 rps_controller = RPS_controller()
-tiar_controller = TIAR_controller()
-fiar_controller = FIAR_controller()
+tiar_controller = GameController(TIAR)
+fiar_controller = GameController(FIAR)
 
 USERNAME_COOKIE = "username"
 COOKIE_SECRET = 'A common mistake that people make when trying to design something completely foolproof is to underestimate the ingenuity of complete fools.'
@@ -42,7 +42,7 @@ def rps(game_id):
 @bottle.post('/rps/<game_id:int>/')
 def rps_update(game_id):
     player_choice = bottle.request.forms.get('player_choice')
-    rps_controller.play(game_id, player_choice)
+    rps_controller.player_play(game_id, player_choice)
     bottle.redirect(f'/rps/{game_id}/')
 
 @bottle.post('/tiar/')
