@@ -9,7 +9,7 @@ TODO:
 
 class GameController:
     def __init__(self, GameClass):
-        self.games = {} # dict of <id, Game object>
+        self.games = {} # dict of <id, GameObject>
         self.game_class = GameClass
 
     def _get_new_id(self):
@@ -20,11 +20,11 @@ class GameController:
         
         return new_id
 
-    def new_game(self, starting_player=1):
+    def new_game(self, user, starting_player=1):
         # For staring player 1=P1, 2=CPU
 
         game_id = self._get_new_id()
-        game = self.game_class()
+        game = self.game_class(user)
 
         self.games[game_id] = game
         
@@ -72,9 +72,10 @@ class GameTemplate:
     """
     Template object for Game inheritance that contains all functions needed in GameController.
     """
-    def __init__(self, computer_ai):
+    def __init__(self, user, computer_ai):
         self.winner = None
         self.ai = computer_ai
+        self.P1 = user
     
     def is_valid_move(self, *args):
         # If game does not have this function it means that it has no need to check whether moves are valid and therefore all moves are valid.
@@ -84,7 +85,9 @@ class GameTemplate:
         return self.winner
 
 class RPS(GameTemplate):
-    def __init__(self, computer_ai=None):
+    def __init__(self, user, computer_ai=None):
+        super().__init__(user, computer_ai or self._choose_random)
+
         # For internal logic numbers are used to represent rock, paper and scissors
         #
         # As it may be usefull to have rps mapped to numbers in the future a dictionary is used along with getter methods to
@@ -92,15 +95,9 @@ class RPS(GameTemplate):
 
         self.translator = {'rock' : 0, 'paper' : 1, 'scissors' : 2}
         self.reverse_translator = {0 : 'rock', 1 : 'paper', 2 : 'scissors'}
-
-        # Set function to be used as AI, default is random.
-        self.ai = computer_ai or self._choose_random
         
         self.player_choice = None
         self.computer_choice = None
-
-        # One of 'player', 'computer', 'draw'
-        self.winner = None 
 
     def get_player_choice(self):
         # Player choice getter. Returns str
@@ -233,8 +230,8 @@ class User:
         return self.password == User._hash_password(password_cleartext, salt)
 
 class TIAR(GameTemplate): #Three In A Row
-    def __init__(self, computer_ai=None):
-        super().__init__(computer_ai or self._random_AI)
+    def __init__(self, user, computer_ai=None):
+        super().__init__(user, computer_ai or self._random_AI)
 
         self.board = [[0 for i in range(3)] for j in range(3)] # 3x3 board 0=empty, 1=player, 2=CPU
 
@@ -308,8 +305,8 @@ class TIAR(GameTemplate): #Three In A Row
         return self.play(2, x, y) # Return winner
 
 class FIAR(GameTemplate):
-    def __init__(self, computer_ai=None):
-        super().__init__(computer_ai or self._random_AI)
+    def __init__(self, user, computer_ai=None):
+        super().__init__(user, computer_ai or self._random_AI)
 
         # The board is represented as such [[column1], [column2], ... , [column7]] each column having 6 rows
         # The left most number in a column represents the bottom most space

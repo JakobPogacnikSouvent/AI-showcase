@@ -13,7 +13,7 @@ COOKIE_SECRET = 'A common mistake that people make when trying to design somethi
 def home():
     user = get_current_user() # Also validates login
 
-    return bottle.template('home2.html', user=user)
+    return bottle.template('home.html', user=user)
 
 def validate_login():
     username = bottle.request.get_cookie(USERNAME_COOKIE, secret=COOKIE_SECRET)
@@ -26,18 +26,26 @@ def get_current_user():
         bottle.redirect('/login/')
     return username
 
+def validate_player(user, game):
+    # Note: user and game.P1 are both actually username because get_current_user returns the users username which is used in intializing the game
+    if game.P1 != user:
+        print(f'User: {user} tried accessing game of user: {game.P1}')
+        bottle.redirect('/')
+
 @bottle.post('/rps/')
 def rps_new_game():
     user = get_current_user() # Also validates login
-    game_id = rps_controller.new_game()
+    game_id = rps_controller.new_game(user)
     bottle.redirect(f'/rps/{game_id}/')
 
 @bottle.get('/rps/<game_id:int>/')
 def rps(game_id):
     user = get_current_user() # Also validates login
-
     game = rps_controller.games[game_id]
-    return bottle.template('rps2.html', game=game, game_id=game_id, user=user)
+
+    validate_player(user, game)
+
+    return bottle.template('rps.html', game=game, game_id=game_id, user=user)
 
 @bottle.post('/rps/<game_id:int>/')
 def rps_update(game_id):
@@ -48,14 +56,16 @@ def rps_update(game_id):
 @bottle.post('/tiar/')
 def tiar_new_game():
     user = get_current_user() # Also validates login
-    game_id = tiar_controller.new_game()
+    game_id = tiar_controller.new_game(user)
     bottle.redirect(f'/tiar/{game_id}/')
 
 @bottle.get('/tiar/<game_id:int>/')
 def tiar(game_id):
     user = get_current_user() # Also validates login
-
     game = tiar_controller.games[game_id]
+
+    validate_player(user, game)
+
     return bottle.template('tiar.html', game=game, game_id=game_id, user=user)
 
 @bottle.post('/tiar/<game_id:int>/')
@@ -67,14 +77,16 @@ def tiar_update(game_id):
 @bottle.post('/fiar/')
 def fiar_new_game():
     user = get_current_user() # Also validates login
-    game_id = fiar_controller.new_game()
+    game_id = fiar_controller.new_game(user)
     bottle.redirect(f'/fiar/{game_id}/')
 
 @bottle.get('/fiar/<game_id:int>/')
 def fiar(game_id):
     user = get_current_user() # Also validates login
-
     game = fiar_controller.games[game_id]
+
+    validate_player(user, game)
+
     return bottle.template('fiar.html', game=game, game_id=game_id, user=user)
 
 @bottle.post('/fiar/<game_id:int>/')
@@ -137,14 +149,6 @@ def test():
 @bottle.route('/static/<picture>')
 def serve_picture(picture):
     return bottle.static_file(picture, root='static')
-
-
-# Bottle apparently has some pathing problems on windows as per https://stackoverflow.com/questions/18460924/bottlepy-template-not-found
-# so we determine relative path to 'views' directory at runtime
-
-# abs_app_dir_path = os.path.dirname(os.path.realpath(__file__))
-# abs_views_path = os.path.join(abs_app_dir_path, 'views')
-# bottle.TEMPLATE_PATH.insert(0, 'views' )
 
 if __name__ == '__main__':
     bottle.run(reloader=True)
