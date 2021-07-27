@@ -7,28 +7,30 @@
         
         <div class="columns">
             <div class="column has-text-centered">
-                <h1>Three in a row</h1>
+                <h1 class="title is-1">Three in a row</h1>
             </div>
         </div>
 
-        <div>
-            <h2>WINNER: {{game.winner}}</h2>
-        </div>
-
-
-        % for row in range(len(game.board)):
-        <div class=" columns">
-                % for column in range(len(game.board[row])):
-                <div class="column">
-                    <form action="/tiar/{{game_id}}/" method="post">
-                        <input type="hidden" name='coords' value='{{row}},{{column}}'>
-                        <button type="submit">{{game.board[row][column]}}</button>
-                    </form>
+        <div class="tiar-field">
+            % for row in range(len(game.board)):
+            <div class="columns">
+                    % for column in range(len(game.board[row])):
+                    <div class="column has-text-centered">
+                        <form action="/tiar/{{game_id}}/" method="post">
+                            <input type="hidden" name='coords' value='{{row}},{{column}}'>
+                            % if game.board[row][column] == 1:
+                            <input type="image" src="/static/krog.png" width="150" height="150">
+                            % elif game.board[row][column] == 2:
+                            <input type="image" src="/static/kriz.png" width="150" height="150">
+                            % else:
+                            <input type="image" src="/static/blank.png" width="150" height="150" style="background-color: blue;">
+                            % end
+                        </form>
+                    </div>
+                    % end
                 </div>
-                % end
-            </div>
-        % end
-
+            % end
+        </div>
     </div>
 </div>
 
