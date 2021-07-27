@@ -150,5 +150,9 @@ def test():
 def serve_picture(picture):
     return bottle.static_file(picture, root='static')
 
+@bottle.route('/static/<filename:path>')
+def send_static(filename):
+    return bottle.static_file(filename, root='static')
+
 if __name__ == '__main__':
     bottle.run(reloader=True)

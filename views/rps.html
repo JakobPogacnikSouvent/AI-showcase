@@ -7,42 +7,88 @@
         
         <div class="columns">
             <div class="column has-text-centered">
-                <h1>Rock Paper Scissors</h1>
+                <h1 class="title is-1">Rock Paper Scissors</h1>
             </div>
         </div>
 
-        <div class="columns">
-            <div class="column">
-                <h2>P1: {{game.get_player_choice()}}</h2>
-            </div>
-            <div class="column">
-                <h2>CPU: {{game.get_computer_choice()}}</h2>
-            </div>
-        </div>
-        
+        % if game.winner == 'player':
+        <div class="has-background-success-light">
+        % elif game.winner == 'computer':
+        <div class="has-background-danger-light">
+        % elif game.winner == 'draw':
+        <div class="has-background-link-light">
+        % else:
         <div>
-            <h2>WINNER: {{game.winner}}</h2>
-        </div>
+        % end
 
+            <div class="columns">
+                <div class="column has-text-centered">
+                    <h3 class="title is-3">P1:</h3>
+                </div>
+                
+                <div class="column has-text-centered">
+                    <h3 class="title is-3">CPU:</h3>
+                </div>
+            </div>
+            
+            <div class="columns">
+                <div class="column has-text-centered">
+                    % if game.get_player_choice() == "rock":
+                    <img src="/static/kamen.png" alt='Rock' width="200" height="200">
+                    % elif game.get_player_choice() == "scissors":
+                    <img src="/static/skarje.png" alt='Scissors' width="200" height="200">
+                    % elif game.get_player_choice() == "paper":
+                    <img src="/static/papir.png" alt='Paper' width="200" height="200">
+                    % else:
+                    <img src="/static/blank.png" width="200" height="200">
+                    % end
+                </div>
+                
+                <div class="column has-text-centered">
+                    % if game.get_computer_choice() == "rock":
+                    <img src="/static/kamen.png" alt='Rock' width="200" height="200">
+                    % elif game.get_computer_choice() == "scissors":
+                    <img src="/static/skarje.png" alt='Scissors' width="200" height="200">
+                    % elif game.get_computer_choice() == "paper":
+                    <img src="/static/papir.png" alt='Paper' width="200" height="200">
+                    % else:
+                    <img src="/static/blank.png" width="200" height="200">
+                    % end
+                </div>
+            </div>
+            
+            <div class="column has-text-centered">
+                % if game.winner == 'player':
+                <p class="has-text-success">You Win!</p>
+                % elif game.winner == 'computer':
+                <p class="has-text-danger-dark">You Lose!</p>
+                % elif game.winner == 'draw':
+                <p class="has-text-link-dark">Draw!</p>
+                % else:
+                <p>Make your move!</p>
+                % end
+            </div>
+        </div>
+            
         <div class=" columns">
-            <div class="column">
+            <div class="column has-text-centered">
                 <form action="/rps/{{game_id}}/" method="post">
                     <input type="hidden" name='player_choice' value='rock'>
-                    <button type="submit">Rock</button>
+                    <input class="black-border-hover" type="image" src="/static/kamen.png" alt='Rock' width="150" height="150">
                 </form>
             </div>
-
-            <div class="column">
+            
+            <div class="column has-text-centered">
                 <form action="/rps/{{game_id}}/" method="post">
                     <input type="hidden" name='player_choice' value='paper'>
-                    <button type="submit">Paper</button>
+                    <input class="black-border-hover" type="image" src="/static/papir.png" alt='Paper' width="150" height="150">
                 </form>
             </div>
-
-            <div class="column">
+            
+            <div class="column has-text-centered">
                 <form action="/rps/{{game_id}}/" method="post">
                     <input type="hidden" name='player_choice' value='scissors'>
-                    <button type="submit">Scissors</button>
+                    <input class="black-border-hover" type="image" src="/static/skarje.png" alt='Scissors' width="150" height="150">
                 </form>
             </div>
         </div>

@@ -3,16 +3,14 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello Bulma!</title>
+    <title>AI Showcase!</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="/static/style.css">
   </head>
 
-  <body>
+  <body class="Site">
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
-        <a class="navbar-item" href="https://bulma.io">
-          <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
-        </a>
     
         <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
           <span aria-hidden="true"></span>
@@ -21,34 +19,30 @@
         </a>
       </div>
     
-      <div id="navbarBasicExample" class="navbar-menu">
+      <div id="navbarBasicExample" class="navbar-menu has-background-grey-lighter">
         <div class="navbar-start">
           <a class="navbar-item" href='/'>
             Home
           </a>
     
-          <a class="navbar-item">
+          <a class="navbar-item" href="https://github.com/JakobPogacnikSouvent/AI-showcase">
             Documentation
           </a>
     
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">
-              More
+              Games
             </a>
     
             <div class="navbar-dropdown">
-              <a class="navbar-item">
-                About
+              <a class="navbar-item" href="/rps/">
+                Rock Paper Scissors
               </a>
-              <a class="navbar-item">
-                Jobs
+              <a class="navbar-item" href="/tiar/">
+                Three in a Row
               </a>
-              <a class="navbar-item">
-                Contact
-              </a>
-              <hr class="navbar-divider">
-              <a class="navbar-item">
-                Report an issue
+              <a class="navbar-item" href="/fiar/">
+                Four in a Row
               </a>
             </div>
           </div>
@@ -64,11 +58,11 @@
                 </button>
               </form>
               % else:
-              <a class="button is-primary" href="/register/">
-                <strong>Sign up</strong>
-              </a>
               <a class="button is-light" href='/login/'>
                 Log in
+              </a>
+              <a class="button is-primary" href="/register/">
+                <strong>Sign up</strong>
               </a>
               % end
 
@@ -80,11 +74,17 @@
       </div>
     </nav>
 
-    <section>
+    <main class="Site-content has-background-white-ter">
       {{!base}}
-    </section>
+    </main>
   </body>
-  <footer>
-    <p>Test footer</p>
+
+  <footer class="Custom_Footer footer has-background-grey-lighter">
+    <div class="content has-text-centered">
+      <p>
+        <strong>AI showcase</strong> created by <a href="https://github.com/JakobPogacnikSouvent">Jakob Pogačnik Souvent</a> as a school project for <a href="https://www.fmf.uni-lj.si/sl/">Faculty of Mathemathics and Physics Ljubljana</a>
+      </p>
+    </div>
   </footer>
+
 </html>

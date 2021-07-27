@@ -1,8 +1,37 @@
-<form method="POST">
-    % if error:
-        <h1>{{ error }}</h1>
-    % end
-    <input type='text' name='username'>
-    <input type='password' name='password'>
-    <input type='submit' value='Register'>
-</form>
+% rebase('base.html')
+
+<section class="hero is-fullheight">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <div class="column is-4 is-offset-4">
+                <h3 class="title has-text-black">Sign up</h3>
+                <hr class="login-hr">
+                <p class="subtitle has-text-black">Please register to proceed.</p>
+                <div class="box">
+                    <form method="POST">
+
+                        % if error:
+                            <p class="has-background-danger-light has-text-danger"> {{ error }} </p>
+                        % end
+
+                        <div class="field">
+                            <input type='text' name='username' class="input is-medium" placeholder="Username">
+                        </div>
+
+                        <div class="field">
+                            <input type='password' name='password' class="input is-medium" placeholder="Password">
+
+                        </div>
+
+                        <button type="submit" class="button is-block is-info is-large is-fullwidth">Register<i class="fa fa-sign-in" aria-hidden="true"></i></button>
+                    </form>
+
+                </div>
+                <p class="has-text-grey">
+                    <a href="/login/">Login</a> &nbsp;·&nbsp;
+                    <a href="../">Need Help?</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>

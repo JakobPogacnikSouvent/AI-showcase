@@ -1,0 +1,29 @@
+.Site {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+  
+.Site-content {
+    flex: 1;
+}
+
+.Custom_Footer {
+    padding: 2rem 1.5rem 3rem;
+}
+
+.custom-card-image {
+    max-width: 100%;
+}
+
+.custom-card-image:hover {
+    border: 5px solid black;
+}
+
+.black-border-hover:hover {
+    border: 5px solid black;
+}
+
+.test {
+    background-color: red;
+}
