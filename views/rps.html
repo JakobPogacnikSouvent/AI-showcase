@@ -1,99 +1,153 @@
 % rebase('base.html')
-
 % import model
 
 <div class="container">
-    <div class="section">
+  <div class="section">
+
+    <div class="columns">
+      <div class="column has-text-centered">
+        <h1 class="title is-1">Rock Paper Scissors</h1>
+      </div>
+    </div>
+
+    % if game.winner == 1:
+    <div class="has-background-success-light">
+    % elif game.winner == 2:
+    <div class="has-background-danger-light">
+    % elif game.winner == 3:
+    <div class="has-background-link-light">
+    % else:
+    <div>
+    % end
+    
+      <div class="columns">
+        <div class="column has-text-centered">
+          <h3 class="title is-3">P1:</h3>
+        </div>
+        <div class="column has-text-centered">
+            <h3 class="title is-3">CPU:</h3>
+        </div>
+      </div>
+
+      <div class="columns">
+        <div class="column has-text-centered">
+          % if game.get_player_choice() == "rock":
+          <img src="/static/kamen.png" alt='Rock' width="200" height="200">
+          % elif game.get_player_choice() == "scissors":
+          <img src="/static/skarje.png" alt='Scissors' width="200" height="200">
+          % elif game.get_player_choice() == "paper":
+          <img src="/static/papir.png" alt='Paper' width="200" height="200">
+          % else:
+          <img src="/static/blank.png" width="200" height="200">
+          % end
+        </div>
         
-        <div class="columns">
-            <div class="column has-text-centered">
-                <h1 class="title is-1">Rock Paper Scissors</h1>
-            </div>
-        </div>
+        <div class="column has-text-centered">
+          % if game.get_computer_choice() == "rock":
+          <img src="/static/kamen.png" alt='Rock' width="200" height="200">
+          % elif game.get_computer_choice() == "scissors":
+          <img src="/static/skarje.png" alt='Scissors' width="200" height="200">
+          % elif game.get_computer_choice() == "paper":
+          <img src="/static/papir.png" alt='Paper' width="200" height="200">
+          % else:
+          <img src="/static/blank.png" width="200" height="200">
+          % end
+        </div>  
+      </div>
 
+      <div class="column has-text-centered">
         % if game.winner == 1:
-        <div class="has-background-success-light">
+        <p class="has-text-success">You Win!</p>
         % elif game.winner == 2:
-        <div class="has-background-danger-light">
+        <p class="has-text-danger-dark">You Lose!</p>
         % elif game.winner == 3:
-        <div class="has-background-link-light">
+        <p class="has-text-link-dark">Draw!</p>
         % else:
-        <div>
+        <p>Make your move!</p>
         % end
+      </div>
+    
+    </div>
+      
+    <div class=" columns">
+      <div class="column has-text-centered">
+        <form action="/rps/{{game_id}}/" method="post">
+            <input type="hidden" name='player_choice' value='rock'>
+            <input class="black-border-hover" type="image" src="/static/kamen.png" alt='Rock' width="150" height="150">
+        </form>
+      </div>
 
-            <div class="columns">
-                <div class="column has-text-centered">
-                    <h3 class="title is-3">P1:</h3>
-                </div>
-                
-                <div class="column has-text-centered">
-                    <h3 class="title is-3">CPU:</h3>
-                </div>
-            </div>
+      <div class="column has-text-centered">
+        <form action="/rps/{{game_id}}/" method="post">
+            <input type="hidden" name='player_choice' value='paper'>
+            <input class="black-border-hover" type="image" src="/static/papir.png" alt='Paper' width="150" height="150">
+        </form>
+      </div>
 
-            <div class="columns">
-                <div class="column has-text-centered">
-                    % if game.get_player_choice() == "rock":
-                    <img src="/static/kamen.png" alt='Rock' width="200" height="200">
-                    % elif game.get_player_choice() == "scissors":
-                    <img src="/static/skarje.png" alt='Scissors' width="200" height="200">
-                    % elif game.get_player_choice() == "paper":
-                    <img src="/static/papir.png" alt='Paper' width="200" height="200">
-                    % else:
-                    <img src="/static/blank.png" width="200" height="200">
-                    % end
-                </div>
-                
-                <div class="column has-text-centered">
-                    % if game.get_computer_choice() == "rock":
-                    <img src="/static/kamen.png" alt='Rock' width="200" height="200">
-                    % elif game.get_computer_choice() == "scissors":
-                    <img src="/static/skarje.png" alt='Scissors' width="200" height="200">
-                    % elif game.get_computer_choice() == "paper":
-                    <img src="/static/papir.png" alt='Paper' width="200" height="200">
-                    % else:
-                    <img src="/static/blank.png" width="200" height="200">
-                    % end
-                </div>
+      <div class="column has-text-centered">
+        <form action="/rps/{{game_id}}/" method="post">
+            <input type="hidden" name='player_choice' value='scissors'>
+            <input class="black-border-hover" type="image" src="/static/skarje.png" alt='Scissors' width="150" height="150">
+        </form>
+      </div>
+    </div>
+
+    <!-- AI select -->
+    <div class="columns">
+      <div class="column">
+        <p>
+          Play against:                
+        </p>
+      </div>
+
+      <div class="column">
+        <div class="dropdown" id="custom-dropdown">
+          <div class="dropdown-trigger">
+            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+              <span>Make ai name display here</span>
+              <span class="icon is-small">
+                <i class="fas fa-angle-down" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+               
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+              <a href="#" class="dropdown-item">Random AI</a>
+              <a href="#" class="dropdown-item">AI2</a>
+              <a href="#" class="dropdown-item">AI3</a>
             </div>
-            
-            <div class="column has-text-centered">
-                % if game.winner == 1:
-                <p class="has-text-success">You Win!</p>
-                % elif game.winner == 2:
-                <p class="has-text-danger-dark">You Lose!</p>
-                % elif game.winner == 3:
-                <p class="has-text-link-dark">Draw!</p>
-                % else:
-                <p>Make your move!</p>
-                % end
-            </div>
+          </div>
         </div>
-            
-        <div class=" columns">
-            <div class="column has-text-centered">
-                <form action="/rps/{{game_id}}/" method="post">
-                    <input type="hidden" name='player_choice' value='rock'>
-                    <input class="black-border-hover" type="image" src="/static/kamen.png" alt='Rock' width="150" height="150">
-                </form>
-            </div>
-            
-            <div class="column has-text-centered">
-                <form action="/rps/{{game_id}}/" method="post">
-                    <input type="hidden" name='player_choice' value='paper'>
-                    <input class="black-border-hover" type="image" src="/static/papir.png" alt='Paper' width="150" height="150">
-                </form>
-            </div>
-            
-            <div class="column has-text-centered">
-                <form action="/rps/{{game_id}}/" method="post">
-                    <input type="hidden" name='player_choice' value='scissors'>
-                    <input class="black-border-hover" type="image" src="/static/skarje.png" alt='Scissors' width="150" height="150">
-                </form>
-            </div>
-        </div>
+      </div>
+
+      <div class="column" id='show-button'>
+        <button class="button">Read about the AI</button>
+      </div>
 
     </div>
+
+    <div class="columns" id="show-div">
+      <div class="columns has-text-centered">
+        <div class="content">
+          <h1>
+            Lorem Ipsum
+          </h1>
+          <p>  
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis laoreet nisi, bibendum venenatis ligula. Nunc id risus ligula. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse maximus sagittis ante, at posuere lorem tempor non. Nunc pellentesque, velit eget laoreet aliquam, nulla nibh maximus lorem, id blandit arcu arcu sed lacus. Nam eu leo est. In elementum orci condimentum lacinia pellentesque. Cras at vulputate elit, vel fringilla leo. Donec ac molestie lacus, vel dictum orci.
+            
+            Nam auctor dolor sit amet nunc finibus, porttitor fringilla urna facilisis. Integer sollicitudin id turpis non bibendum. Proin luctus ac ante sit amet auctor. Donec diam mi, sagittis sed consequat sit amet, sodales at arcu. Curabitur ultricies ut odio vel semper. Integer tincidunt justo sed lobortis tincidunt. Cras ac lobortis dolor.
+            
+            Phasellus feugiat a massa at accumsan. Nulla nec fermentum sapien. Proin libero ligula, ullamcorper imperdiet turpis quis, lobortis commodo massa. Sed facilisis elit id tincidunt aliquam. Praesent finibus mattis vestibulum. Sed tristique, nibh vel dictum venenatis, arcu augue cursus erat, non sollicitudin velit ipsum id nisl. Vestibulum et justo auctor, ullamcorper mi vitae, mollis enim. Duis eu tristique ex. Pellentesque non nisl ut massa ullamcorper accumsan.
+            
+            Proin eleifend felis at tincidunt molestie. Suspendisse felis enim, consequat et convallis a, pretium sed enim. Nullam posuere mollis dui, a dictum metus placerat a. Fusce sollicitudin, sem id fringilla blandit, urna metus scelerisque lacus, vel pellentesque felis urna vel quam. Nullam tristique nulla a dui maximus, vel feugiat ipsum tempor. Mauris a nulla sem. Etiam ex ante, feugiat quis cursus sit amet, sagittis in lorem. Nulla facilisi. Quisque a sollicitudin nibh. Nullam sit amet sapien ac sem rutrum tempor non vitae velit. Vestibulum id mollis justo, in ullamcorper erat. Phasellus viverra risus augue, at ornare dolor feugiat quis. Nunc semper sagittis enim, vel tristique urna tristique id. Curabitur placerat purus sit amet nibh maximus venenatis. Integer blandit ante quis euismod molestie.
+            
+            Vestibulum risus arcu, pretium ultrices massa a, ullamcorper tempor dolor. Nunc urna eros, maximus at semper quis, malesuada et ipsum. Nullam sit amet lacus mi. Aenean in efficitur urna. Aenean placerat efficitur volutpat. Etiam vulputate lectus nec leo venenatis porttitor. Curabitur aliquam efficitur erat, nec laoreet metus sagittis sed. Nullam finibus lacinia justo, vitae molestie est. Vestibulum ex quam, imperdiet nec molestie ac, rutrum id urna. Pellentesque neque justo, pretium et tincidunt ut, sodales vel nulla.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
-
-
+<script src="/static/script.js"></script>
