@@ -24,10 +24,11 @@
     border: 5px solid black;
 }
 
-.test {
-    background-color: red;
-}
-
 .tiar-field {
     background-color: cornflowerblue;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
 }

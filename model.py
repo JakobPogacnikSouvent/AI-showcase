@@ -2,11 +2,6 @@ import random
 import json
 import hashlib
 
-"""
-TODO:
-    Games need to be player specific
-"""
-
 class GameController:
     def __init__(self, GameClass):
         self.games = {} # dict of <id, GameObject>
@@ -56,6 +51,7 @@ class GameController:
 
         # If player makes a winning move return a winner
         if (winner := self.games[game_id].play(1, *args)): # 1=P1, 2=CPU
+            self._update_player_score(self.games[game_id])
             return winner
         
         # If there is no winner after player move make AI move
@@ -63,10 +59,45 @@ class GameController:
 
             # If AI make a winning move return a winner
             if (winner := self.games[game_id].ai()):
+                self._update_player_score(self.games[game_id])
                 return winner
         
+        # Check if game ended in a draw
+        if self.games[game_id].winner == 3:
+            self._update_player_score(self.games[game_id])
+            return self.games[game_id].winner
+
         # If neither player or AI wins return None
         return None
+    
+    def _update_player_score(self, game):
+        """
+        Update the score in player files.
+        """
+        player = game.P1
+
+        user = User.load_user_from_file(player)
+
+        try:
+            game_ai_dict = user.data[game.__class__.__name__]
+
+        except KeyError: # If game hasn't been played before
+            game_ai_dict = dict()
+            user.data[game.__class__.__name__] = game_ai_dict
+
+        try:
+            score_vs_ai = user.data[game.__class__.__name__][game.ai.__name__]
+            
+        except KeyError: # If game ai hasn't been played before
+            score_vs_ai = {'player' : 0, 'cpu' : 0, 'draw' : 0}
+            user.data[game.__class__.__name__][game.ai.__name__] = score_vs_ai
+            
+
+        translator = {1 : 'player', 2 : 'cpu', 3 : 'draw'}
+        score_vs_ai[translator[game.winner]] += 1
+
+        user.save_user_to_file()
+
 
 class GameTemplate:
     """
@@ -161,16 +192,17 @@ class RPS_controller(GameController):
         self.games[game_id].play(player_choice)
 
 class User:
-    def __init__(self, username, password):
+    def __init__(self, username, password, data=None):
         self.username = username
-        self.password = password # Hashed 
+        self.password = password # Hashed
+        self.data = data or dict() # Will save win and loss data for all games
 
     @staticmethod
     def get_user_data_file(username):
         return f"{username}.json"
     
     def toDict(self):
-        return {'username' : self.username, 'password' : self.password}
+        return {'username' : self.username, 'password' : self.password, 'data' : self.data}
 
     def save_user_to_file(self):
         with open(User.get_user_data_file(self.username), 'w') as File:
@@ -184,8 +216,9 @@ class User:
 
                 uname = data_dict['username']
                 passwd = data_dict['password']
+                data = data_dict['data']
 
-                return User(uname, passwd)
+                return User(uname, passwd, data)
         except FileNotFoundError:
             print(f'File for user {username} not found.')
             return None
@@ -199,6 +232,8 @@ class User:
             user = User(username, password)
             user.save_user_to_file()
             return user
+
+
     @staticmethod
     def login(username, password_cleartext):
         try:

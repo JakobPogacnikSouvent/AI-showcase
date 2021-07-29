@@ -10,6 +10,7 @@
         </div>
 
         <div class="columns is-multiline">
+            <!-- RPS -->
             <div class="column is-4">
                 <div class="card large">
                     
@@ -27,19 +28,27 @@
                         </div>
                         
                         <div class="content">
-                            Play the classic game of rock paper scissors agains a computer AI.
+                            Also known as <b>Rochambeau</b>, is a game played between two people, in which each player simultaneously choses one of three shapes.
+                            Those being <b>rock</b>, <b>paper</b>, and <b>scissors</b>. Once chosen the winner is decided by the rules of paper beating rock, scissors beating paper and rock beating scissors.
+                            If same shapes are selected by both players the game is a draw.
+
+                            While in a vacum it is a game of pure chance in practice a skilled player is able to predict his opponent and have a better chance of wining.
+                            As such while a random AI should have a 30% winrate against all oponents we can write a better AI by trying to predict the human mind.
                         </div>
                     </div>
                 </div>
             </div>   
-                
+            
+            <!-- TIAR -->
             <div class="column is-4">
                 <div class="card large">
+
                     <div class="card-image">
-                        <figure class="image is-16by9">
-                            <img src="/static/rps.png" alt="Image">
-                        </figure>
+                        <form action="/tiar/" method="post">
+                            <input type="image" class="custom-card-image" src="/static/rps.png" alt='Rock Paper Scissors' width="400" height="400">
+                        </form>
                     </div>
+
 
                     <div class="card-content">
                         <div class="media">
@@ -49,21 +58,23 @@
                         </div>
                         
                         <div class="content">
-                            Play the classic game of three in a row agains a computer AI.
-                            <form action="/tiar/" method="post">
-                                <button type="submit">TIAR</button>
-                            </form>
+                            Also known as <b>Tic-tac-toe</b> or <b>Noughts and Crosses</b> is traditionally a paper-and-pencil game for two players, X and O, who take turns marking the spaces in a 3×3 grid.
+                            The player who succeeds in placing three of their marks in a diagonal, horizontal, or vertical row is the winner.
+
+                            Due to it's small board the game has a relativelly low number of posible games and as such is a relatively simple game to solve.
+                            Even so there are different ways of approaching writing a perfect three in a row AI.  
                         </div>
                     </div>
                 </div>
             </div>
-                
+            
+            <!-- FIAR -->
             <div class="column is-4">
                 <div class="card large">
                     <div class="card-image">
-                        <figure class="image is-16by9">
-                            <img src="/static/rps.png" alt="Image">
-                        </figure>
+                        <form action="/fiar/" method="post">
+                            <input type="image" class="custom-card-image" src="/static/rps.png" alt='Rock Paper Scissors' width="400" height="400">
+                        </form>
                     </div>
 
                     <div class="card-content">
@@ -74,10 +85,11 @@
                         </div>
                         
                         <div class="content">
-                            Play the classic game of four in a row agains a computer AI.
-                            <form action="/fiar/" method="post">
-                                <button type="submit">FIAR</button>
-                            </form>
+                            Also known as <b>Four Up</b>, <b>Plot Four</b>, <b>Find Four</b>, <b>Captain's Mistress</b>, <b>Connect Four</b>, <b>Drop Four</b>, and <b>Gravitrips</b>
+                            is a two-player connection board game, in which the players choose a color and then take turns dropping colored discs into a seven-column, six-row grid.
+                            The pieces fall straight down, occupying the lowest available space within the column. The objective of the game is to be the first to form a horizontal, vertical, or diagonal line of four of one's own discs.
+
+                            While the game has been solved since 1988, the 4,531,985,219,092 possible positions of the game board still make writing a perfect AI for this game very challenging.
                         </div>
                     </div>
                 </div>

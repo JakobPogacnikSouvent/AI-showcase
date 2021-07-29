@@ -7,17 +7,12 @@
         
         <div class="columns">
             <div class="column has-text-centered">
-                <h1>Four in a row</h1>
+                <h1 class="title is-1">Four in a row</h1>
             </div>
         </div>
 
-        <div>
-            <h2>WINNER: {{game.winner}}</h2>
-        </div>
-
-
-        <div>
-            <table class="table">
+        <div class="column has-text-centered">
+            <table class="table" style="margin-left: auto; margin-right: auto;">
                 <tr>
                     % for column_index in range(7):
                         <th>
@@ -33,7 +28,13 @@
                     <tr>
                         % for column_index in range(7):
                             <td>
-                                {{ game.board[column_index][-row_index] }}
+                                % if game.board[column_index][-row_index] == 1:
+                                <input type="image" src="/static/krog.png" width="50" height="50">
+                                % elif game.board[column_index][-row_index] == 2:
+                                <input type="image" src="/static/kriz.png" width="50" height="50">
+                                % else:
+                                <input type="image" src="/static/blank.png" width="50" height="50" style="background-color: blue;">
+                                % end
                             </td>
                         % end
                     </tr>
