@@ -55,9 +55,18 @@
   
 
         <div class="navbar-end">
+          % if defined('user'):
+          <div class="navbar-item">
+            <div>
+              <b>{{user}}</b>
+            </div>
+          </div>
+          % end
+
           <div class="navbar-item">
             <div class="buttons">
               % if defined('user'):
+
               <form method="POST" action="/logout/">
                 <button class="button is-light">
                   Sign out
@@ -71,8 +80,6 @@
                 <strong>Sign up</strong>
               </a>
               % end
-
-
 
             </div>
           </div>

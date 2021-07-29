@@ -11,11 +11,11 @@
             </div>
         </div>
 
-        % if game.winner == 'player':
+        % if game.winner == 1:
         <div class="has-background-success-light">
-        % elif game.winner == 'computer':
+        % elif game.winner == 2:
         <div class="has-background-danger-light">
-        % elif game.winner == 'draw':
+        % elif game.winner == 3:
         <div class="has-background-link-light">
         % else:
         <div>
@@ -58,11 +58,11 @@
             </div>
             
             <div class="column has-text-centered">
-                % if game.winner == 'player':
+                % if game.winner == 1:
                 <p class="has-text-success">You Win!</p>
-                % elif game.winner == 'computer':
+                % elif game.winner == 2:
                 <p class="has-text-danger-dark">You Lose!</p>
-                % elif game.winner == 'draw':
+                % elif game.winner == 3:
                 <p class="has-text-link-dark">Draw!</p>
                 % else:
                 <p>Make your move!</p>
