@@ -11,36 +11,74 @@
             </div>
         </div>
 
-        <div class="column has-text-centered">
-            <table class="table" style="margin-left: auto; margin-right: auto;">
-                <tr>
-                    % for column_index in range(7):
-                        <th>
-                            <form action="/fiar/{{game_id}}/" method="post">
-                                <input type="hidden" name='column' value='{{ column_index }}'>
-                                <button type="submit">↓</button>
-                            </form>
-                        </th>
-                    % end
-                </tr>
+        % if game.winner == 1:
+        <div class="has-background-success-light C-win-border C-winbox-spacing">
+        % elif game.winner == 2:
+        <div class="has-background-danger-light C-lose-border C-winbox-spacing">
+        % elif game.winner == 3:
+        <div class="has-background-link-light C-draw-border C-winbox-spacing">
+        % else:
+        <div class="C-winbox-spacing">
+        % end
 
-                % for row_index in range(1,7):
+            <div class="column has-text-centered">
+                % if game.winner == 1:
+                <h1 class="title is-3 has-text-success">
+                    <form action="/fiar/" method="post">
+                        <button class="button is-success">⟲</button> You Win!
+                    </form>
+                </h1>
+                % elif game.winner == 2:
+                <h1 class="title is-3 has-text-danger-dark">                    
+                    <form action="/fiar/" method="post">
+                        <button class="button is-danger">⟲</button> You Lose!
+                    </form>
+                </h1>
+                % elif game.winner == 3:
+                <h1 class="title is-3 has-text-link-dark">
+                    <form action="/fiar/" method="post">
+                        <button class="button is-link">⟲</button> Draw!
+                    </form>
+                </h1>
+                % end
+            </div>
+
+            <div class="column has-text-centered">
+                <table class=" C-fiar-buttons-table table"> 
                     <tr>
-                        % for column_index in range(7):
-                            <td>
-                                % if game.board[column_index][-row_index] == 1:
-                                <input type="image" src="/static/krog.png" width="50" height="50">
-                                % elif game.board[column_index][-row_index] == 2:
-                                <input type="image" src="/static/kriz.png" width="50" height="50">
-                                % else:
-                                <input type="image" src="/static/blank.png" width="50" height="50" style="background-color: blue;">
-                                % end
-                            </td>
+                        % if not game.winner:
+                            % for column_index in range(7):
+                                <th>
+                                    <form action="/fiar/{{game_id}}/" method="post">
+                                        <input type="hidden" name='column' value='{{ column_index }}'>
+                                        <button class="button is-primary" type="submit">↓</button>
+                                    </form>
+                                </th>
+                            % end
                         % end
                     </tr>
-                % end
-                
-            </table>
+                </table>
+                <table class="C-fiar-table">
+
+                    % for row_index in range(1,7):
+                        <tr>
+                            % for column_index in range(7):
+                                <td class="C-fiar-space">
+                                    % if game.board[column_index][-row_index] == 1:
+                                    <input type="image" src="/static/krog_yellow2.png" width="50" height="50">
+                                    % elif game.board[column_index][-row_index] == 2:
+                                    <input type="image" src="/static/krog_red2.png" width="50" height="50">
+                                    % else:
+                                    <input type="image" src="/static/krog_white.png" width="50" height="50">
+                                    % end
+                                </td>
+                            % end
+                        </tr>
+                    % end
+                    
+                </table>
+            </div>
+        
         </div>
 
     </div>

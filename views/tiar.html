@@ -1,7 +1,6 @@
 % rebase('base.html')
 
 % import model
-
 <div class="container">
     <div class="section">
         
@@ -10,27 +9,62 @@
                 <h1 class="title is-1">Three in a row</h1>
             </div>
         </div>
+        
+        % if game.winner == 1:
+        <div class="has-background-success-light C-win-border C-winbox-spacing">
+        % elif game.winner == 2:
+        <div class="has-background-danger-light C-lose-border C-winbox-spacing">
+        % elif game.winner == 3:
+        <div class="has-background-link-light C-draw-border C-winbox-spacing">
+        % else:
+        <div class="C-winbox-spacing">
+        % end
 
-        <div class="tiar-field">
-            % for row in range(len(game.board)):
-            <div class="columns">
-                    % for column in range(len(game.board[row])):
-                    <div class="column has-text-centered">
-                        <form action="/tiar/{{game_id}}/" method="post">
-                            <input type="hidden" name='coords' value='{{row}},{{column}}'>
-                            % if game.board[row][column] == 1:
-                            <input type="image" src="/static/krog.png" width="150" height="150">
-                            % elif game.board[row][column] == 2:
-                            <input type="image" src="/static/kriz.png" width="150" height="150">
-                            % else:
-                            <input type="image" src="/static/blank.png" width="150" height="150" style="background-color: blue;">
-                            % end
-                        </form>
-                    </div>
+            <div class="column has-text-centered">
+                % if game.winner == 1:
+                <h1 class="title is-3 has-text-success">                    
+                    <form action="/tiar/" method="post">
+                        <button class="button is-success">⟲</button> You Win!
+                    </form>
+                </h1> 
+                % elif game.winner == 2:
+                <h1 class="title is-3 has-text-danger-dark">
+                    <form action="/tiar/" method="post">
+                        <button class="button is-danger">⟲</button> You Lose!
+                    </form>
+                </h1>
+                % elif game.winner == 3:
+                <h1 class="title is-3 has-text-link-dark">                    
+                    <form action="/tiar/" method="post">
+                        <button class="button is-link">⟲</button> Draw!
+                    </form>
+                </h1>
+                % end
+            </div>
+
+            <div class="content">
+                <div class="C-game-board">
+                    % for row in range(len(game.board)):
+                        % for column in range(len(game.board[row])):
+                        <div class="C-box">
+                            <form action="/tiar/{{game_id}}/" method="post">
+                                <input type="hidden" name='coords' value='{{row}},{{column}}'>
+                                % if game.board[row][column] == 1:
+                                <input type="image" src="/static/krog.png" width="180" height="180">
+                                % elif game.board[row][column] == 2:
+                                <input type="image" src="/static/kriz.png" width="180" height="180">
+                                % else:
+                                <input class="C-tiar-empty" type="image" src="/static/blank.png" width="180" height="180">
+                                % end
+                            </form>
+                        </div>
+                        % end
                     % end
                 </div>
-            % end
+            </div>
+
         </div>
+            
     </div>
 </div>
 

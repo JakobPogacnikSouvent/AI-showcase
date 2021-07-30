@@ -11,13 +11,13 @@
     </div>
 
     % if game.winner == 1:
-    <div class="has-background-success-light">
+    <div class="has-background-success-light C-win-border C-winbox-spacing">
     % elif game.winner == 2:
-    <div class="has-background-danger-light">
+    <div class="has-background-danger-light C-lose-border C-winbox-spacing">
     % elif game.winner == 3:
-    <div class="has-background-link-light">
+    <div class="has-background-link-light C-draw-border C-winbox-spacing">
     % else:
-    <div>
+    <div class="C-winbox-spacing">
     % end
     
       <div class="columns">
@@ -73,21 +73,21 @@
       <div class="column has-text-centered">
         <form action="/rps/{{game_id}}/" method="post">
             <input type="hidden" name='player_choice' value='rock'>
-            <input class="black-border-hover" type="image" src="/static/kamen.png" alt='Rock' width="150" height="150">
+            <input class="C-black-border-hover" type="image" src="/static/kamen.png" alt='Rock' width="150" height="150">
         </form>
       </div>
 
       <div class="column has-text-centered">
         <form action="/rps/{{game_id}}/" method="post">
             <input type="hidden" name='player_choice' value='paper'>
-            <input class="black-border-hover" type="image" src="/static/papir.png" alt='Paper' width="150" height="150">
+            <input class="C-black-border-hover" type="image" src="/static/papir.png" alt='Paper' width="150" height="150">
         </form>
       </div>
 
       <div class="column has-text-centered">
         <form action="/rps/{{game_id}}/" method="post">
             <input type="hidden" name='player_choice' value='scissors'>
-            <input class="black-border-hover" type="image" src="/static/skarje.png" alt='Scissors' width="150" height="150">
+            <input class="C-black-border-hover" type="image" src="/static/skarje.png" alt='Scissors' width="150" height="150">
         </form>
       </div>
     </div>

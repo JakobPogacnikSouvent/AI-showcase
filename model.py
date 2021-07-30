@@ -299,8 +299,6 @@ class TIAR(GameTemplate): #Three In A Row
 
         # Check all columns
         for i in range(3):
-            print(i)
-            print([self.board[j][i] for j in range(3)])
             if len({self.board[j][i] for j in range(3)}) == 1 and self.board[0][i] != 0:
                 winner = self.board[0][i]
                 return winner
@@ -388,7 +386,7 @@ class FIAR(GameTemplate):
         r, c = row, col
         while c > 0 and self.board[c-1][r] == player:
             c -= 1
-        print(r, c)
+
         try:
             if len({self.board[c + i][r] for i in range(4)}) == 1:
                 return player
