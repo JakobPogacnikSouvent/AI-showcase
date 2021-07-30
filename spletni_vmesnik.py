@@ -35,7 +35,10 @@ def validate_player(user, game):
 @bottle.post('/rps/')
 def rps_new_game():
     user = get_current_user() # Also validates login
+    
+    rps_controller.fix_memory_leak()
     game_id = rps_controller.new_game(user)
+    
     bottle.redirect(f'/rps/{game_id}/')
 
 @bottle.get('/rps/<game_id:int>/')
@@ -56,7 +59,10 @@ def rps_update(game_id):
 @bottle.post('/tiar/')
 def tiar_new_game():
     user = get_current_user() # Also validates login
+
+    tiar_controller.fix_memory_leak()
     game_id = tiar_controller.new_game(user)
+
     bottle.redirect(f'/tiar/{game_id}/')
 
 @bottle.get('/tiar/<game_id:int>/')
@@ -77,7 +83,10 @@ def tiar_update(game_id):
 @bottle.post('/fiar/')
 def fiar_new_game():
     user = get_current_user() # Also validates login
+
+    fiar_controller.fix_memory_leak()
     game_id = fiar_controller.new_game(user)
+    
     bottle.redirect(f'/fiar/{game_id}/')
 
 @bottle.get('/fiar/<game_id:int>/')

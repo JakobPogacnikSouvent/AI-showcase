@@ -6,12 +6,18 @@ class GameController:
     def __init__(self, GameClass):
         self.games = {} # dict of <id, GameObject>
         self.game_class = GameClass
+        self.games_counter = 0
 
     def _get_new_id(self):
-        if not self.games:
-            new_id = 0
-        else:
-            new_id = max(self.games.keys()) + 1
+        """
+        For memory reasons in scalability we should probably reset the games counter at some point.
+        But as we do not expect to ever create more than 1000 games and also due to the fact that
+        python integers do not have an upper bound such solution is adequate until our site gets
+        bought by google.
+        """
+        new_id = self.games_counter
+
+        self.games_counter += 1
         
         return new_id
 
@@ -28,6 +34,8 @@ class GameController:
 
             game.ai() # No need to check for winner on the first move
         
+        print(self.games)
+
         return game_id
 
     def player_play(self, game_id, *args):
@@ -97,6 +105,22 @@ class GameController:
         score_vs_ai[translator[game.winner]] += 1
 
         user.save_user_to_file()
+
+    def fix_memory_leak(self):
+        """
+        Deletes all games that have finished in self.games
+
+        This has linear time complexity but as we do not expect our usercount to exceed 1000
+        we can pretend that it's trivial
+        """
+        games_to_delete = []
+
+        for ID in self.games.keys():
+            if self.games[ID].winner:
+                games_to_delete.append(ID)
+
+        for ID in games_to_delete:
+            del(self.games[ID])
 
 class GameTemplate:
     """
@@ -179,12 +203,19 @@ class RPS_controller(GameController):
     """
 
     def __init__(self):
-        self.games = {} # dict of <id, RPS>
-        self.game_class = RPS
+        super().__init__(RPS)
 
     def player_play(self, game_id, player_choice):
         self.games[game_id].play(player_choice)
         self._update_player_score(self.games[game_id])
+
+    def fix_memory_leak(self):
+        """
+        As RPS game object spends most of it's time in a finished state
+        and it supports replaying from the finished state we need another way
+        of clearing its saved games 
+        """
+        pass
 
 class User:
     def __init__(self, username, password, data=None):
