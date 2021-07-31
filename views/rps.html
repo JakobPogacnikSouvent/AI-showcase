@@ -92,19 +92,21 @@
       </div>
     </div>
 
+    <hr class="C-divider">
+
     <!-- AI select -->
     <div class="columns">
-      <div class="column">
-        <p>
+      <div class="column is-narrow">
+        <h1 class="title is-3">
           Play against:                
-        </p>
+        </h1>
       </div>
 
       <div class="column">
-        <div class="dropdown" id="custom-dropdown">
+        <div class="dropdown is-up" id="custom-dropdown">
           <div class="dropdown-trigger">
             <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-              <span>Make ai name display here</span>
+              <span>{{game.get_ai_name_text()}}</span>
               <span class="icon is-small">
                 <i class="fas fa-angle-down" aria-hidden="true"></i>
               </span>
@@ -121,15 +123,14 @@
         </div>
       </div>
 
-      <div class="column" id='show-button'>
+      <div class="column is-narrow" id='show-button'>
         <button class="button">Read about the AI</button>
       </div>
 
     </div>
 
     <div class="columns is-hidden" id="show-div">
-      <div class="columns has-text-centered">
-        <div class="content">
+        <div class="content C-ai-explanation">
           <h1>
             Lorem Ipsum
           </h1>
@@ -145,8 +146,8 @@
             Vestibulum risus arcu, pretium ultrices massa a, ullamcorper tempor dolor. Nunc urna eros, maximus at semper quis, malesuada et ipsum. Nullam sit amet lacus mi. Aenean in efficitur urna. Aenean placerat efficitur volutpat. Etiam vulputate lectus nec leo venenatis porttitor. Curabitur aliquam efficitur erat, nec laoreet metus sagittis sed. Nullam finibus lacinia justo, vitae molestie est. Vestibulum ex quam, imperdiet nec molestie ac, rutrum id urna. Pellentesque neque justo, pretium et tincidunt ut, sodales vel nulla.
           </p>
         </div>
-      </div>
     </div>
+    <!-- End of AI Select -->
 
   </div>
 </div>

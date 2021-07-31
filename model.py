@@ -94,11 +94,11 @@ class GameController:
             user.data[game.__class__.__name__] = game_ai_dict
 
         try:
-            score_vs_ai = user.data[game.__class__.__name__][game.ai.__name__]
+            score_vs_ai = user.data[game.__class__.__name__][game.get_ai_name_text()]
             
         except KeyError: # If game ai hasn't been played before
             score_vs_ai = {'player' : 0, 'cpu' : 0, 'draw' : 0}
-            user.data[game.__class__.__name__][game.ai.__name__] = score_vs_ai
+            user.data[game.__class__.__name__][game.get_ai_name_text()] = score_vs_ai
             
 
         translator = {1 : 'player', 2 : 'cpu', 3 : 'draw'}
@@ -130,6 +130,7 @@ class GameTemplate:
         self.winner = None
         self.ai = computer_ai
         self.P1 = user
+        self.ai_translator = dict() # Used to convert ai method to nice text format
     
     def is_valid_move(self, *args):
         # If game does not have this function it means that it has no need to check whether moves are valid and therefore all moves are valid.
@@ -137,6 +138,16 @@ class GameTemplate:
     
     def play(self):
         return self.winner
+
+    def get_ai_name_text(self):
+        # Returns a nice text representation of the ai method
+        # e.g.: 
+        # get_ai_name_text of game class that is using the function _choose_random or _random_AI would return "Random AI"
+
+        try:
+            return self.ai_translator[self.ai]
+        except KeyError:
+            return "AI name not defined."
 
 class RPS(GameTemplate):
     def __init__(self, user, computer_ai=None):
@@ -149,7 +160,9 @@ class RPS(GameTemplate):
 
         self.translator = {'rock' : 0, 'paper' : 1, 'scissors' : 2}
         self.reverse_translator = {0 : 'rock', 1 : 'paper', 2 : 'scissors'}
-        
+
+        self.ai_translator = {self._choose_random : "Random AI"}
+
         self.player_choice = None
         self.computer_choice = None
 
@@ -196,6 +209,7 @@ class RPS(GameTemplate):
             
             else:
                 self.winner = 2 # Computer
+
 
 class RPS_controller(GameController):
     """
@@ -294,6 +308,8 @@ class TIAR(GameTemplate): #Three In A Row
     def __init__(self, user, computer_ai=None):
         super().__init__(user, computer_ai or self._random_AI)
 
+        self.ai_translator = {self._random_AI : "Random AI"}
+
         self.board = [[0 for i in range(3)] for j in range(3)] # 3x3 board 0=empty, 1=player, 2=CPU
 
     def play(self, player, x, y):
@@ -366,6 +382,8 @@ class TIAR(GameTemplate): #Three In A Row
 class FIAR(GameTemplate):
     def __init__(self, user, computer_ai=None):
         super().__init__(user, computer_ai or self._random_AI)
+
+        self.ai_translator = {self._random_AI : "Random AI"}
 
         # The board is represented as such [[column1], [column2], ... , [column7]] each column having 6 rows
         # The left most number in a column represents the bottom most space

@@ -32,8 +32,8 @@
 }
 
 .C-game-board {
-    width: 600px;
-    height: 600px;
+    width: 501px;
+    height: 501px;
     margin-inline: auto;
     background-color: #34495e;
     color: #fff;
@@ -52,6 +52,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.C-tiar-image {
+    max-width: 100%;
 }
 
 .C-logo {
@@ -106,4 +110,21 @@
     margin-left: auto;
     margin-right: auto;
     border: 1px solid black;
+}
+
+hr {
+    border: 0;
+    clear:both;
+    display:block;
+    background-color: #999999;
+    height: 1px;
+}
+
+hr .C-divider {
+margin-top: 40px;
+margin-bottom: 10px;
+}
+
+.C-ai-explanation {
+    margin-top: 50px
 }

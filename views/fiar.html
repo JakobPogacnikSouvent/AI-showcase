@@ -81,5 +81,63 @@
         
         </div>
 
+        <hr class="C-divider">
+
+        <!-- AI select -->
+        <div class="columns">
+          <div class="column is-narrow">
+            <h1 class="title is-3">
+              Play against:                
+            </h1>
+          </div>
+    
+          <div class="column">
+            <div class="dropdown is-up" id="custom-dropdown">
+              <div class="dropdown-trigger">
+                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+                  <span>{{game.get_ai_name_text()}}</span>
+                  <span class="icon is-small">
+                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                  </span>
+                </button>
+              </div>
+                   
+              <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                <div class="dropdown-content">
+                  <a href="#" class="dropdown-item">Random AI</a>
+                  <a href="#" class="dropdown-item">AI2</a>
+                  <a href="#" class="dropdown-item">AI3</a>
+                </div>
+              </div>
+            </div>
+          </div>
+    
+          <div class="column is-narrow" id='show-button'>
+            <button class="button">Read about the AI</button>
+          </div>
+    
+        </div>
+    
+        <div class="columns is-hidden" id="show-div">
+            <div class="content C-ai-explanation">
+              <h1>
+                Lorem Ipsum
+              </h1>
+              <p>  
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis laoreet nisi, bibendum venenatis ligula. Nunc id risus ligula. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse maximus sagittis ante, at posuere lorem tempor non. Nunc pellentesque, velit eget laoreet aliquam, nulla nibh maximus lorem, id blandit arcu arcu sed lacus. Nam eu leo est. In elementum orci condimentum lacinia pellentesque. Cras at vulputate elit, vel fringilla leo. Donec ac molestie lacus, vel dictum orci.
+                
+                Nam auctor dolor sit amet nunc finibus, porttitor fringilla urna facilisis. Integer sollicitudin id turpis non bibendum. Proin luctus ac ante sit amet auctor. Donec diam mi, sagittis sed consequat sit amet, sodales at arcu. Curabitur ultricies ut odio vel semper. Integer tincidunt justo sed lobortis tincidunt. Cras ac lobortis dolor.
+                
+                Phasellus feugiat a massa at accumsan. Nulla nec fermentum sapien. Proin libero ligula, ullamcorper imperdiet turpis quis, lobortis commodo massa. Sed facilisis elit id tincidunt aliquam. Praesent finibus mattis vestibulum. Sed tristique, nibh vel dictum venenatis, arcu augue cursus erat, non sollicitudin velit ipsum id nisl. Vestibulum et justo auctor, ullamcorper mi vitae, mollis enim. Duis eu tristique ex. Pellentesque non nisl ut massa ullamcorper accumsan.
+                
+                Proin eleifend felis at tincidunt molestie. Suspendisse felis enim, consequat et convallis a, pretium sed enim. Nullam posuere mollis dui, a dictum metus placerat a. Fusce sollicitudin, sem id fringilla blandit, urna metus scelerisque lacus, vel pellentesque felis urna vel quam. Nullam tristique nulla a dui maximus, vel feugiat ipsum tempor. Mauris a nulla sem. Etiam ex ante, feugiat quis cursus sit amet, sagittis in lorem. Nulla facilisi. Quisque a sollicitudin nibh. Nullam sit amet sapien ac sem rutrum tempor non vitae velit. Vestibulum id mollis justo, in ullamcorper erat. Phasellus viverra risus augue, at ornare dolor feugiat quis. Nunc semper sagittis enim, vel tristique urna tristique id. Curabitur placerat purus sit amet nibh maximus venenatis. Integer blandit ante quis euismod molestie.
+                
+                Vestibulum risus arcu, pretium ultrices massa a, ullamcorper tempor dolor. Nunc urna eros, maximus at semper quis, malesuada et ipsum. Nullam sit amet lacus mi. Aenean in efficitur urna. Aenean placerat efficitur volutpat. Etiam vulputate lectus nec leo venenatis porttitor. Curabitur aliquam efficitur erat, nec laoreet metus sagittis sed. Nullam finibus lacinia justo, vitae molestie est. Vestibulum ex quam, imperdiet nec molestie ac, rutrum id urna. Pellentesque neque justo, pretium et tincidunt ut, sodales vel nulla.
+              </p>
+            </div>
+        </div>
+        <!-- End of AI Select -->    
+
     </div>
 </div>
+<script src="/static/script.js"></script>
