@@ -1,0 +1,43 @@
+% rebase('base.html')
+
+% import model
+
+<div class="container">
+    <div class="section">
+        
+        <div class="columns">
+            <div class="column has-text-centered">
+                <h1 class="title is-1">Welcome {{user}}</h1>
+            </div>
+        </div>
+
+        <div class="column has-text-centered">
+            <table class="table C-fiar-buttons-table">
+                <tr>
+                    <td class="has-text-weight-bold">Game</td>
+                    <td class="has-text-weight-bold">AI</td>
+                    <td class="has-text-weight-bold">Win</td>
+                    <td class="has-text-weight-bold">Lose</td>
+                    <td class="has-text-weight-bold">Draw</td>
+                    <td class="has-text-weight-bold">Win %</td>
+                </tr>
+
+                % for game in data.keys():
+                    % for AI in data[game]:
+                        <tr>
+                            <td>{{game}}</td>
+                            <td>{{AI}}</td>
+                            <td>{{data[game][AI]['player']}}</td>
+                            <td>{{data[game][AI]['cpu']}}</td>
+                            <td>{{data[game][AI]['draw']}}</td>
+                            <td>{{round(data[game][AI]['player'] / (data[game][AI]['player'] + data[game][AI]['cpu'] + data[game][AI]['draw']), 2)}}</td>
+                        </tr>
+                    % end
+                % end
+
+            </table>
+        </div>
+
+
+    </div>
+</div>

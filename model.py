@@ -112,6 +112,10 @@ class GameController:
 
         This has linear time complexity but as we do not expect our usercount to exceed 1000
         we can pretend that it's trivial
+
+        NOTE: If user leaves the website when he hasn't finished the game the game will still stay in memory and cause a memory leak.
+        A possible solution for this would be to save the time a game was started and remove all games that have been active for a
+        certain time.
         """
         games_to_delete = []
 

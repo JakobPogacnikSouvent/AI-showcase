@@ -151,9 +151,13 @@ def register_post():
     except ValueError as e:
         return bottle.template('register.html', error=e)
 
-@bottle.get('/test/')
-def test():
-    return bottle.template('imagetest.html')
+@bottle.get('/profile/')
+def profile():   
+    user = get_current_user() # Also validates login
+    
+    data = User.load_user_from_file(user).data
+    
+    return bottle.template("profile.html", user=user, data=data)
 
 @bottle.route('/static/<picture>')
 def serve_picture(picture):
