@@ -115,9 +115,21 @@
                
           <div class="dropdown-menu" id="dropdown-menu" role="menu">
             <div class="dropdown-content">
-              <a href="#" class="dropdown-item">Random AI</a>
-              <a href="#" class="dropdown-item">AI2</a>
-              <a href="#" class="dropdown-item">AI3</a>
+              <form action="/rps/" method="POST">
+                <input type="hidden" name="ai" value="0">
+                <button class="button is-light" type="submit">Random AI</button>
+              </form>
+
+              <form action="/rps/" method="POST">
+                <input type="hidden" name="ai" value="1">
+                <button class="button is-light" type="submit">Greedy AI</button>
+              </form>
+
+              <form action="/rps/" method="POST">
+                <input type="hidden" name="ai" value="2">
+                <button class="button is-light" type="submit">Average AI</button>
+              </form>
+
             </div>
           </div>
         </div>

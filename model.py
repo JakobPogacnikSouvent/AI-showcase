@@ -1,5 +1,6 @@
 import random
 import json
+from json.decoder import JSONDecodeError
 import hashlib
 
 class GameController:
@@ -21,11 +22,11 @@ class GameController:
         
         return new_id
 
-    def new_game(self, user, starting_player=1):
+    def new_game(self, user, game_ai_method=0, starting_player=1):
         # For staring player 1=P1, 2=CPU
 
         game_id = self._get_new_id()
-        game = self.game_class(user)
+        game = self.game_class(user, game_ai_method)
 
         self.games[game_id] = game
         
@@ -34,8 +35,6 @@ class GameController:
 
             game.ai() # No need to check for winner on the first move
         
-        print(self.games)
-
         return game_id
 
     def player_play(self, game_id, *args):
@@ -154,8 +153,10 @@ class GameTemplate:
             return "AI name not defined."
 
 class RPS(GameTemplate):
-    def __init__(self, user, computer_ai=None):
-        super().__init__(user, computer_ai or self._choose_random)
+    def __init__(self, user, computer_ai=0):
+        ai_translator = {0 : self._choose_random, 1 : self._greedy, 2 : self._calculate_percentage}
+
+        super().__init__(user, ai_translator[computer_ai])
 
         # For internal logic numbers are used to represent rock, paper and scissors
         #
@@ -165,7 +166,7 @@ class RPS(GameTemplate):
         self.translator = {'rock' : 0, 'paper' : 1, 'scissors' : 2}
         self.reverse_translator = {0 : 'rock', 1 : 'paper', 2 : 'scissors'}
 
-        self.ai_translator = {self._choose_random : "Random AI"}
+        self.ai_translator = {self._choose_random : "Random AI", self._greedy : "Greedy AI", self._calculate_percentage : "Average AI"}
 
         self.player_choice = None
         self.computer_choice = None
@@ -200,6 +201,49 @@ class RPS(GameTemplate):
     def _choose_random(self):
         self.computer_choice = random.randint(0,2)
 
+    def _calculate_percentage(self):
+        """
+        This mehod works by calculating the percentage of oponent's last chosen actions and assuming the percentages hold true for the future.
+        """
+        # Index 0=Rock, 1=Paper, 2=Scissors
+        weights = [0, 0, 0]
+
+        user = User.load_user_from_file(self.P1)
+
+        try:
+            history = user.data[self.__class__.__name__]['History']
+
+            for player_choice, winner in history:
+                weights[player_choice] += 1
+            
+            predicted_player_choice = random.choices([0,1,2], weights)[0]
+            self.computer_choice = (predicted_player_choice + 1) % 3
+
+            
+        except KeyError: # If game hasn't been played before
+            self._choose_random()
+
+    def _greedy(self):
+        user = User.load_user_from_file(self.P1)
+
+        try:
+            history = user.data[self.__class__.__name__]['History']
+
+            last_player_choice, last_player_score = history[-1]
+
+            if last_player_score == 1: # If player has won we predict he will chose the same
+                self.computer_choice = (last_player_choice + 1) % 3
+            
+            elif last_player_score == 2:
+                self.computer_choice = (last_player_choice - 1) % 3
+
+            else:
+                self._choose_random()
+
+        
+        except KeyError:
+            self._choose_random()
+
     def _eval_winner(self):
         if self.player_choice is None: # Only check player_choice because computer choice is always evaluated immediatelly after player choice
             raise ValueError('Player_choice is of type None in eval_winner; 0, 1, 2 expected')
@@ -213,7 +257,6 @@ class RPS(GameTemplate):
             
             else:
                 self.winner = 2 # Computer
-
 
 class RPS_controller(GameController):
     """
@@ -234,6 +277,43 @@ class RPS_controller(GameController):
         of clearing its saved games 
         """
         pass
+
+    def _update_player_score(self, game):
+        """
+        For RPS we also want to save what players chose in the past.
+        """
+        # Super()._update_player_score()
+        player = game.P1
+
+        user = User.load_user_from_file(player)
+
+        try:
+            game_ai_dict = user.data[game.__class__.__name__]
+
+        except KeyError: # If game hasn't been played before
+            game_ai_dict = dict()
+            user.data[game.__class__.__name__] = game_ai_dict
+
+        try:
+            score_vs_ai = user.data[game.__class__.__name__][game.get_ai_name_text()]
+            
+        except KeyError: # If game ai hasn't been played before
+            score_vs_ai = {'player' : 0, 'cpu' : 0, 'draw' : 0}
+            user.data[game.__class__.__name__][game.get_ai_name_text()] = score_vs_ai
+            
+
+        translator = {1 : 'player', 2 : 'cpu', 3 : 'draw'}
+        score_vs_ai[translator[game.winner]] += 1
+        # End of Super()._update_player_score()
+
+        # Update player choice history
+        try:
+            history = user.data[game.__class__.__name__]['History']
+            history.append((game.player_choice, game.winner))
+        except KeyError:
+            user.data[game.__class__.__name__]['History'] = [(game.player_choice, game.winner)]
+
+        user.save_user_to_file()
 
 class User:
     def __init__(self, username, password, data=None):
@@ -309,10 +389,12 @@ class User:
         return self.password == User._hash_password(password_cleartext, salt)
 
 class TIAR(GameTemplate): #Three In A Row
-    def __init__(self, user, computer_ai=None):
-        super().__init__(user, computer_ai or self._random_AI)
+    def __init__(self, user, computer_ai=0):
+        ai_translator = {0 : self._random_AI, 1 : self._minmax_AI}
 
-        self.ai_translator = {self._random_AI : "Random AI"}
+        super().__init__(user, ai_translator[computer_ai])
+
+        self.ai_translator = {self._random_AI : "Random AI", self._minmax_AI : "Minmax AI"}
 
         self.board = [[0 for i in range(3)] for j in range(3)] # 3x3 board 0=empty, 1=player, 2=CPU
 
@@ -332,7 +414,7 @@ class TIAR(GameTemplate): #Three In A Row
     def is_valid_move(self, x, y):
         return not self.board[x][y]
 
-    def _check_game_end(self):
+    def _check_game_end(self, board=None):
         """
         Check current board state if the game is over.
         returns:
@@ -342,29 +424,31 @@ class TIAR(GameTemplate): #Three In A Row
             None : if no winner and game is not over
         """
 
+        board = board or self.board
+
         # Check all rows
-        for row in self.board:
+        for row in board:
             if len(set(row)) == 1 and row[0] != 0:
                 winner = row[0]
                 return winner
 
         # Check all columns
         for i in range(3):
-            if len({self.board[j][i] for j in range(3)}) == 1 and self.board[0][i] != 0:
-                winner = self.board[0][i]
+            if len({board[j][i] for j in range(3)}) == 1 and board[0][i] != 0:
+                winner = board[0][i]
                 return winner
 
         # Check both diagonals
-        if len({self.board[i][i] for i in range(3)}) == 1 and self.board[0][0] != 0:
-            winner = self.board[0][0]
+        if len({board[i][i] for i in range(3)}) == 1 and board[0][0] != 0:
+            winner = board[0][0]
             return winner
 
-        if len({self.board[i][-(i+1)] for i in range(3)}) == 1 and self.board[0][-1] != 0:
-            winner = self.board[0][-1]
+        if len({board[i][-(i+1)] for i in range(3)}) == 1 and board[0][-1] != 0:
+            winner = board[0][-1]
             return winner
 
         # Check if board is not full
-        for row in self.board:
+        for row in board:
             if 0 in row:
                 return None
 
@@ -382,9 +466,90 @@ class TIAR(GameTemplate): #Three In A Row
             y = random.randint(0,2)
 
         return self.play(2, x, y) # Return winner
+    
+    def _minmax_AI(self):
+        best_move = self._find_best_move(self.board.copy(), 2)
+
+        x, y, _ = best_move
+
+        print(best_move)
+
+        self.play(2, x, y)
+
+    def _board_to_str(self, board):
+        s = ""
+        for row in board:
+            for value in row:
+                s += str(value)
+        return s
+
+    def _find_best_move(self, board, player, depth=3):
+        print(f"We got the board {board}")
+        
+        try:
+            with open('tiar_ai.json') as File:
+                data_dict = json.load(File)
+
+                best_move = data_dict[self._board_to_str(board)]
+
+                return best_move
+
+        except (KeyError, FileNotFoundError, JSONDecodeError):
+
+            # +9 and -9 are practically +inf and -inf
+            if player == 2:
+                best_move = [None, None, -9]
+            else:
+                best_move = [None, None, +9]
+
+
+            if self._check_game_end(board) == 1:
+                return [None, None, -1]
+            elif self._check_game_end(board) == 2:
+                return [None, None, 1]
+            elif depth == 0 or self._check_game_end(board) == 3:
+                return [None, None, 0]
+
+
+            for x in range(3):
+                for y in range(3):
+                    if self.is_valid_move(x, y):
+                        board[x][y] = player
+
+                        next_player = 1 if player == 2 else 2
+                        
+                        score = self._find_best_move(board, next_player, depth - 1)
+                        
+                        board[x][y] = 0
+
+                        score[0], score[1] = x, y
+
+                        if player == 2:
+                            if score[2] > best_move[2]:
+                                best_move = score  # max value
+                        else:
+                            if score[2] < best_move[2]:
+                                best_move = score  # min value
+            
+            if best_move[2]:
+                try:
+                    data_dict = dict()
+                    with open('tiar_ai.json') as File:
+                        data_dict = json.load(File)
+
+                        data_dict[self._board_to_str(board)] = best_move
+
+                except (FileNotFoundError, JSONDecodeError):
+                    pass
+                
+                with open('tiar_ai.json', 'w') as File:
+                    json.dump(data_dict, File, ensure_ascii=False, indent=4)                        
+            
+            print(f"Evaluated that the best move for {player} is {best_move}")
+            return best_move
 
 class FIAR(GameTemplate):
-    def __init__(self, user, computer_ai=None):
+    def __init__(self, user, computer_ai=0):
         super().__init__(user, computer_ai or self._random_AI)
 
         self.ai_translator = {self._random_AI : "Random AI"}

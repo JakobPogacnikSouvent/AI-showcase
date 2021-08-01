@@ -36,8 +36,10 @@ def validate_player(user, game):
 def rps_new_game():
     user = get_current_user() # Also validates login
     
+    ai = int(bottle.request.forms.get('ai') or 0) # If .get returns none we default to random ai which is 0
+
     rps_controller.fix_memory_leak()
-    game_id = rps_controller.new_game(user)
+    game_id = rps_controller.new_game(user, ai)
     
     bottle.redirect(f'/rps/{game_id}/')
 
@@ -60,8 +62,10 @@ def rps_update(game_id):
 def tiar_new_game():
     user = get_current_user() # Also validates login
 
+    ai = int(bottle.request.forms.get('ai') or 0) # If .get returns none we default to random ai which is 0
+
     tiar_controller.fix_memory_leak()
-    game_id = tiar_controller.new_game(user)
+    game_id = tiar_controller.new_game(user, ai)
 
     bottle.redirect(f'/tiar/{game_id}/')
 
