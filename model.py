@@ -2,6 +2,7 @@ import random
 import json
 from json.decoder import JSONDecodeError
 import hashlib
+from copy import deepcopy
 
 class GameController:
     def __init__(self, GameClass):
@@ -468,7 +469,7 @@ class TIAR(GameTemplate): #Three In A Row
         return self.play(2, x, y) # Return winner
     
     def _minmax_AI(self):
-        best_move = self._find_best_move(self.board.copy(), 2)
+        best_move = self._find_best_move(deepcopy(self.board), 2)
 
         x, y, _ = best_move
 
@@ -550,98 +551,217 @@ class TIAR(GameTemplate): #Three In A Row
 
 class FIAR(GameTemplate):
     def __init__(self, user, computer_ai=0):
-        super().__init__(user, computer_ai or self._random_AI)
+        ai_translator = {0 : self._random_AI, 1 : self._alpha_beta_pruning_AI}
 
-        self.ai_translator = {self._random_AI : "Random AI"}
+        super().__init__(user, ai_translator[computer_ai])
+
+        self.ai_translator = {self._random_AI : "Random AI", self._alpha_beta_pruning_AI : "Alpha-Beta Pruning"}
 
         # The board is represented as such [[column1], [column2], ... , [column7]] each column having 6 rows
         # The left most number in a column represents the bottom most space
         self.board = [[0 for i in range(6)] for j in range(7)]
 
     def _random_AI(self):
-        column = random.randint(0, 6)
+        column = random.randint(0, 6) # Randint is inclusive
         
         while not self.is_valid_move(column):
-            column = random.randint(0, 6)
+            column = random.randint(0, 6) # Randint is inclusive
         
         return self.play(2, column)
+    
+    def _alpha_beta_pruning_AI(self):
+        board = deepcopy(self.board)
+        column, _ = self._maximize(board, -100, 100, 6)
+
+        return self.play(2, column)
+
+    # CPU maximizes
+    def _maximize(self, board, alpha, beta, depth=3):
+        print(f"Maximize b:{board}, a:{alpha}, b:{beta}, d:{depth}")
+
+        # If player has won return -infinity
+        if self._check_game_end(board) == 1:
+            print('-infinity')
+            return -1, -100
+        # If cpu has won return +infinity
+        elif self._check_game_end(board) == 2:
+            print('+infinity')
+            return -1, 100
+
+        if depth == 0:
+            return -1, self._eval_board_heuristic(2, board)
+
+        best_move_column = -1
+        value = -100
+
+        for col in range(7):
+            if self._is_valid_move_on_board(board, col):
+                branch_board = deepcopy(board)
+                self._make_move(2, col, branch_board)
+                _, branch_value = self._minimize(branch_board, max(alpha, value), beta, depth-1)
+                
+                del branch_board
+                
+                if branch_value > value:
+                    value = branch_value
+                    best_move_column = col
+
+                    # Check to prune
+                    if value > beta:
+                        return best_move_column, value
+
+        return best_move_column, value
+
+    # P1 minimizes
+    def _minimize(self, board, alpha, beta, depth=3):
+        # If player has won return -infinity
+        if self._check_game_end(board) == 1:
+            return -1, -100
+        # If cpu has won return +infinity
+        elif self._check_game_end(board) == 2:
+            return -1, 100
+
+        if depth == 0:
+            return -1, self._eval_board_heuristic(1,board)
+
+        best_move_column = -1
+        value = 100
+
+        for col in range(7):
+            if self._is_valid_move_on_board(board, col):
+                branch_board = deepcopy(board)
+                self._make_move(1, col, branch_board)
+                _, branch_value = self._maximize(branch_board, alpha, min(beta, value), depth-1)
+                
+                del branch_board
+                
+                if branch_value < value:
+                    value = branch_value
+                    best_move_column = col
+
+                    # Check to prune
+                    if value < alpha:
+                        return best_move_column, value
+
+        return best_move_column, value
+
+    def _eval_board_heuristic(self, player, board):
+        """
+        Board evaluation works by counting the number of possible four in a rows each player can still make
+
+        Should only be used on boards that haven't yet ended.
+        """
+
+        possible_wins = 0
+        not_player = 1 if player == 2 else 2
+
+        # Check all vertical possibilities
+        for column in board:
+            for i in range(3):
+                s = {column[i], column[i+1], column[i+2], column[i+3]}
+                
+                if not_player in s:
+                    continue
+                else:
+                    possible_wins += 1
+
+        # Check all horizontal possibilities
+        for row in range(6):
+            for col in range(4):
+                s = {board[col][row], board[col+1][row], board[col+2][row], board[col+3][row]}
+
+                if not_player in s:
+                    continue
+                else:
+                    possible_wins += 1
+
+        # Check all L-diagonals
+        for col in range(4):
+            for row in range(3):
+                s = {board[col][row], board[col+1][row+1], board[col+2][row+2], board[col+3][row+3]}
+                
+                if not_player in s:
+                    continue
+                else:
+                    possible_wins += 1
+
+        # Check all R-diagonals
+        for col in range(4):
+            for row in range(3,6):
+                s = {board[col][row], board[col+1][row-1], board[col+2][row-2], board[col+3][row-3]}
+
+                if not_player in s:
+                    continue
+                else:
+                    possible_wins += 1
+
+        if player == 1:
+            return -possible_wins # Player minimizes
+        else:
+            return possible_wins # Cpu maximizes
 
     def play(self, player, col):
+        if player == 1: print("IAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+
         # If the game is already finished return winner
         if self.winner is not None:
             return self.winner
 
-        column = self.board[col]
+        # Make the move
+        column, row = self._make_move(player, col, self.board)
+                
+        # Update winner
+        self.winner = self._check_game_end(self.board) # If there is no winner _check_game_end returns None
+        return self.winner
+    
+    def _make_move(self, player, col, board):
+        column = board[col]
         for row in range(len(column)):
             if column[row] == 0:
-                column[row] = player # Column is a reference so this will mutate self.board[col]
+                column[row] = player # column is a reference so this will mutate board
+
+                return (col, row)
+
+    def _check_game_end(self, board):
+
+        # Check all vertical possibilities
+        for column in board:
+            for i in range(3):
+                s = {column[i], column[i+1], column[i+2], column[i+3]}
                 
-                # Update winner
-                self.winner = self._check_game_end(col, row, player) # If there is no winner _check_game_end returns None
-                return self.winner
-    
-    def _check_game_end(self, col, row, player):
-        """
-        Check if the last move cause the game to end.
-        
-        args:
-            x, y : coords of last played move. The game will only end if the newly played move is included in the winning 4 in a row combination
-            player : the player that caused the last move to happen (1=P1, 2=CPU)
+                if len(s) == 1 and (player := s.pop()):
+                    return player
 
-        returns:
-            1 : if P1 won
-            2 : if CPU won
-            3 : if game is a draw
-            None : if no winner and game is not over
-        """
-        
-        # Check vertical
-        if row >= 3: # Verticall 4 in a row is only possible if we are high enough
-            if len({self.board[col][row - i] for i in range(4)}) == 1: # See if four stones below are the same
-                return player
+        # Check all horizontal possibilities
+        for row in range(6):
+            for col in range(4):
+                s = {board[col][row], board[col+1][row], board[col+2][row], board[col+3][row]}
+                
+                if len(s) == 1 and (player := s.pop()):
+                    return player
 
-        # Check horizontal
-        r, c = row, col
-        while c > 0 and self.board[c-1][r] == player:
-            c -= 1
+        # Check all L-diagonals
+        for col in range(4):
+            for row in range(3):
+                s = {board[col][row], board[col+1][row+1], board[col+2][row+2], board[col+3][row+3]}
+                
+                if len(s) == 1 and (player := s.pop()):
+                    return player
 
-        try:
-            if len({self.board[c + i][r] for i in range(4)}) == 1:
-                return player
-        except IndexError: # If you go out of range in list comprehension
-            pass
+        # Check all R-diagonals
+        for col in range(4):
+            for row in range(3,6):
+                s = {board[col][row], board[col+1][row-1], board[col+2][row-2], board[col+3][row-3]}
 
-        # Check first diagonal
-        r, c = row, col
-        while c > 0 and r > 0 and self.board[c-1][r-1] == player:
-            r -= 1
-            c -= 1
-        
-        try:
-            if len({self.board[c+i][r+i] for i in range(4)}) == 1:
-                return player
-        except IndexError:
-            pass
+                if len(s) == 1 and (player := s.pop()):
+                    return player
 
-        # Check second diagonal
-        r, c = row, col
-        while c < 6 and r > 0 and self.board[c+1][r-1] == player:
-            r -= 1
-            c += 1
-        
-        try:
-            if len({self.board[c-i][r+i] for i in range(4)}) == 1:
-                return player
-        except IndexError:
-            pass
+        # If there is no victor
+        return None
 
-        # Check if board is full
-        for column in self.board:
-            if 0 in column:
-                return None
-        
-        # If board is full
-        return 3
 
     def is_valid_move(self, column):
         return 0 in self.board[column]
+    
+    def _is_valid_move_on_board(self, board, column):
+        return 0 in board[column]
