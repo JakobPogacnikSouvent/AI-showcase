@@ -162,7 +162,7 @@ def profile():
     user = get_current_user() # Also validates login
     
     data = User.load_user_from_file(user).data
-    
+
     return bottle.template("profile.html", user=user, data=data)
 
 @bottle.route('/static/<picture>')

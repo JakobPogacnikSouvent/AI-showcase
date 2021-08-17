@@ -130,9 +130,10 @@ class GameTemplate:
     """
     Template object for Game inheritance that contains all functions needed in GameController.
     """
-    def __init__(self, user, computer_ai):
+    def __init__(self, user, computer_ai, ai_index=0):
         self.winner = None
         self.ai = computer_ai
+        self.ai_index = ai_index # Used to know pass information on what ai is being used when you want to make a new game with the same ai 
         self.P1 = user
         self.ai_translator = dict() # Used to convert ai method to nice text format
     
@@ -157,7 +158,7 @@ class RPS(GameTemplate):
     def __init__(self, user, computer_ai=0):
         ai_translator = {0 : self._choose_random, 1 : self._greedy, 2 : self._calculate_percentage}
 
-        super().__init__(user, ai_translator[computer_ai])
+        super().__init__(user, ai_translator[computer_ai], computer_ai)
 
         # For internal logic numbers are used to represent rock, paper and scissors
         #
@@ -389,11 +390,11 @@ class User:
         salt, _ = self.password.split('$')
         return self.password == User._hash_password(password_cleartext, salt)
 
-class TIAR(GameTemplate): #Three In A Row
+class TIAR(GameTemplate): # Three In A Row
     def __init__(self, user, computer_ai=0):
         ai_translator = {0 : self._random_AI, 1 : self._minmax_AI}
 
-        super().__init__(user, ai_translator[computer_ai])
+        super().__init__(user, ai_translator[computer_ai], computer_ai)
 
         self.ai_translator = {self._random_AI : "Random AI", self._minmax_AI : "Minmax AI"}
 
@@ -413,7 +414,10 @@ class TIAR(GameTemplate): #Three In A Row
         return self.winner
 
     def is_valid_move(self, x, y):
-        return not self.board[x][y]
+        return self._is_valid_move_on_board(x, y, self.board)
+
+    def _is_valid_move_on_board(self, x, y, board):
+        return not board[x][y]
 
     def _check_game_end(self, board=None):
         """
@@ -473,8 +477,6 @@ class TIAR(GameTemplate): #Three In A Row
 
         x, y, _ = best_move
 
-        print(best_move)
-
         self.play(2, x, y)
 
     def _board_to_str(self, board):
@@ -485,8 +487,6 @@ class TIAR(GameTemplate): #Three In A Row
         return s
 
     def _find_best_move(self, board, player, depth=3):
-        print(f"We got the board {board}")
-        
         try:
             with open('tiar_ai.json') as File:
                 data_dict = json.load(File)
@@ -514,11 +514,11 @@ class TIAR(GameTemplate): #Three In A Row
 
             for x in range(3):
                 for y in range(3):
-                    if self.is_valid_move(x, y):
+                    if self._is_valid_move_on_board(x, y, board):
                         board[x][y] = player
 
                         next_player = 1 if player == 2 else 2
-                        
+
                         score = self._find_best_move(board, next_player, depth - 1)
                         
                         board[x][y] = 0
@@ -546,16 +546,15 @@ class TIAR(GameTemplate): #Three In A Row
                 with open('tiar_ai.json', 'w') as File:
                     json.dump(data_dict, File, ensure_ascii=False, indent=4)                        
             
-            print(f"Evaluated that the best move for {player} is {best_move}")
             return best_move
 
 class FIAR(GameTemplate):
     def __init__(self, user, computer_ai=0):
         ai_translator = {0 : self._random_AI, 1 : self._alpha_beta_pruning_AI}
 
-        super().__init__(user, ai_translator[computer_ai])
+        super().__init__(user, ai_translator[computer_ai], computer_ai)
 
-        self.ai_translator = {self._random_AI : "Random AI", self._alpha_beta_pruning_AI : "Alpha-Beta Pruning"}
+        self.ai_translator = {self._random_AI : "Random AI", self._alpha_beta_pruning_AI : "Alpha-Beta Pruning AI"}
 
         # The board is represented as such [[column1], [column2], ... , [column7]] each column having 6 rows
         # The left most number in a column represents the bottom most space
@@ -571,21 +570,18 @@ class FIAR(GameTemplate):
     
     def _alpha_beta_pruning_AI(self):
         board = deepcopy(self.board)
-        column, _ = self._maximize(board, -100, 100, 6)
+        column, _ = self._maximize(board, -100, 100, 5)
 
         return self.play(2, column)
 
     # CPU maximizes
-    def _maximize(self, board, alpha, beta, depth=3):
-        print(f"Maximize b:{board}, a:{alpha}, b:{beta}, d:{depth}")
+    def _maximize(self, board, alpha, beta, depth=4):
 
         # If player has won return -infinity
         if self._check_game_end(board) == 1:
-            print('-infinity')
             return -1, -100
         # If cpu has won return +infinity
         elif self._check_game_end(board) == 2:
-            print('+infinity')
             return -1, 100
 
         if depth == 0:
@@ -613,7 +609,7 @@ class FIAR(GameTemplate):
         return best_move_column, value
 
     # P1 minimizes
-    def _minimize(self, board, alpha, beta, depth=3):
+    def _minimize(self, board, alpha, beta, depth=4):
         # If player has won return -infinity
         if self._check_game_end(board) == 1:
             return -1, -100
@@ -701,7 +697,6 @@ class FIAR(GameTemplate):
             return possible_wins # Cpu maximizes
 
     def play(self, player, col):
-        if player == 1: print("IAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 
         # If the game is already finished return winner
         if self.winner is not None:
