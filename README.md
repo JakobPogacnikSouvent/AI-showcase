@@ -1,5 +1,5 @@
 # About
-This is a school project that includes a website on which you can face different computer AI in three games (Rock Paper Scissors, Three in a Row and Four in a row) and learn about some of the common ways to write computer AI.
+This is a school project for the [Faculty of Mathemathics and Physics Ljubljana](https://www.fmf.uni-lj.si/sl/ "Faculty of Mathemathics and Physics Ljubljana") that includes a website on which you can face different computer AI in three games (Rock Paper Scissors, Three in a Row and Four in a row) and learn about some of the common ways to write computer AI.
 
 # Dependencies
 1. __Python 3.9.3__ or newer. Download from the official [Python homepage](https://www.python.org/ "Official Python homepage").
