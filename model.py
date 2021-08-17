@@ -236,7 +236,7 @@ class RPS(GameTemplate):
             if last_player_score == 1: # If player has won we predict he will chose the same
                 self.computer_choice = (last_player_choice + 1) % 3
             
-            elif last_player_score == 2:
+            elif last_player_score == 2: # If player has lost we predict he will switch to what beat him
                 self.computer_choice = (last_player_choice - 1) % 3
 
             else:

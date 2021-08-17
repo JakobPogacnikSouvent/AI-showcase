@@ -141,24 +141,72 @@
 
     </div>
 
-    <div class="columns is-hidden" id="show-div">
+    % if game.get_ai_name_text() == "Random AI":
+      <div class="columns is-hidden" id="show-div">
+          <div class="content C-ai-explanation">
+            <h1>
+              Random AI
+            </h1>
+            <p>  
+              The simplest possible AI that works by randomly selecting either Rock, Paper or Scissors.
+              Interestingly enough since Rock, Paper, Scissors is a very simplistic game that can be in a vacumn perceived as random,
+              such AI should have a 33% win rate, 33% loss rate and 33% draw rate against all oponents.
+            </p>
+            <p>
+              While this is a theoretically perfect AI when playing against computers, humans have some innate biases that can be exploited
+              in the game of Rock, Paper, Scissors to write a better performing AI that predicts the player's actions.
+            </p>
+          </div>
+      </div>
+    % elif game.get_ai_name_text() == "Greedy AI":
+      <div class="columns is-hidden" id="show-div">
         <div class="content C-ai-explanation">
           <h1>
-            Lorem Ipsum
+            Greedy AI
           </h1>
           <p>  
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis laoreet nisi, bibendum venenatis ligula. Nunc id risus ligula. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse maximus sagittis ante, at posuere lorem tempor non. Nunc pellentesque, velit eget laoreet aliquam, nulla nibh maximus lorem, id blandit arcu arcu sed lacus. Nam eu leo est. In elementum orci condimentum lacinia pellentesque. Cras at vulputate elit, vel fringilla leo. Donec ac molestie lacus, vel dictum orci.
-            
-            Nam auctor dolor sit amet nunc finibus, porttitor fringilla urna facilisis. Integer sollicitudin id turpis non bibendum. Proin luctus ac ante sit amet auctor. Donec diam mi, sagittis sed consequat sit amet, sodales at arcu. Curabitur ultricies ut odio vel semper. Integer tincidunt justo sed lobortis tincidunt. Cras ac lobortis dolor.
-            
-            Phasellus feugiat a massa at accumsan. Nulla nec fermentum sapien. Proin libero ligula, ullamcorper imperdiet turpis quis, lobortis commodo massa. Sed facilisis elit id tincidunt aliquam. Praesent finibus mattis vestibulum. Sed tristique, nibh vel dictum venenatis, arcu augue cursus erat, non sollicitudin velit ipsum id nisl. Vestibulum et justo auctor, ullamcorper mi vitae, mollis enim. Duis eu tristique ex. Pellentesque non nisl ut massa ullamcorper accumsan.
-            
-            Proin eleifend felis at tincidunt molestie. Suspendisse felis enim, consequat et convallis a, pretium sed enim. Nullam posuere mollis dui, a dictum metus placerat a. Fusce sollicitudin, sem id fringilla blandit, urna metus scelerisque lacus, vel pellentesque felis urna vel quam. Nullam tristique nulla a dui maximus, vel feugiat ipsum tempor. Mauris a nulla sem. Etiam ex ante, feugiat quis cursus sit amet, sagittis in lorem. Nulla facilisi. Quisque a sollicitudin nibh. Nullam sit amet sapien ac sem rutrum tempor non vitae velit. Vestibulum id mollis justo, in ullamcorper erat. Phasellus viverra risus augue, at ornare dolor feugiat quis. Nunc semper sagittis enim, vel tristique urna tristique id. Curabitur placerat purus sit amet nibh maximus venenatis. Integer blandit ante quis euismod molestie.
-            
-            Vestibulum risus arcu, pretium ultrices massa a, ullamcorper tempor dolor. Nunc urna eros, maximus at semper quis, malesuada et ipsum. Nullam sit amet lacus mi. Aenean in efficitur urna. Aenean placerat efficitur volutpat. Etiam vulputate lectus nec leo venenatis porttitor. Curabitur aliquam efficitur erat, nec laoreet metus sagittis sed. Nullam finibus lacinia justo, vitae molestie est. Vestibulum ex quam, imperdiet nec molestie ac, rutrum id urna. Pellentesque neque justo, pretium et tincidunt ut, sodales vel nulla.
+            The affectionately dubbed Greedy AI is an AI that uses the player's last played choice and uses it exclusively to predict
+            the player's next move. The prediction works by exploiting the observations that human players are more likely to stick with
+            the same choice if it brought them victory in a round while also being more likely to switch if they lost. Thus the AI predicts
+            that upon winning the player will stick with their choice but upon losing the player will switch to what beat him. While easily
+            exploitable upon knowing how it works it should, in theory, proudce a higher win rate than random AI versus human oponents. Against
+            a player that chooses their moves randomly this AI has no advantage.
+          </p>
+          <p>
+            A greedy algorithm in programming is any algorithm that follows the problem-solving heuristic of making the locally optimal choice at each stage.
+            In other words it solves a big problem by chosing the best choice in each step of the way. This name has a slightly ironic conontation
+            as this "Greedy" AI works not by chosing the optimal choice but by chosing what we hope is the optimal choice and thus avoiding the harder problem
+            of predicting the player.
+          </p>
+          <p>
+            The winrate might be slightly increased if we figured out what humans are likely to switch to after drawing.
+            The biggest flaw of this AI is that once its strategy is known to a human opponent its win rate drops to 0%
+            as it has a deterministic algorithm.
           </p>
         </div>
-    </div>
+      </div>
+    % elif game.get_ai_name_text() == "Average AI":
+      <div class="columns is-hidden" id="show-div">
+        <div class="content C-ai-explanation">
+          <h1>
+            Average AI
+          </h1>
+          <p>  
+            The Average AI works by exploiting the human tendency to pick the same choices over and over again. It works by saving all choices
+            the player has ever made and calculating the percentage of times he has picked a certain item and then having that same probability
+            to chose the wining item. As the algorithm is not deterministic the player gains no significant advantage from knowing how it works,
+            but as all Rock, Paper, Scissors AI, still only has a 33% win rate against random oponents.
+          </p>
+          <p>
+            The AI could be improved by not only looking at the overall probability but by also taking into account the sequence of player's last
+            choices and make a better prediction, but such improvements border on machine learning. As a last interesting sidenote, since the AI saves
+            all games ever played by the player it is probably possible to crash the program or at least grow the player.json file to ridiculous
+            sizes by playing millions of games of rock paper scissors, which you have my permission to achieve, if you have nothing better to do
+            for the next few years and have a really low bar for quality entertainment.
+          </p>
+        </div>
+      </div>
+    % end
     <!-- End of AI Select -->
 
   </div>

@@ -128,24 +128,45 @@
     
         </div>
     
-        <div class="columns is-hidden" id="show-div">
+        % if game.get_ai_name_text() == "Random AI":
+          <div class="columns is-hidden" id="show-div">
+              <div class="content C-ai-explanation">
+                <h1>
+                  Random AI
+                </h1>
+                <p>  
+                  The simplest possible AI one can make in any game. While it can work in some games it is next to useless in the game of
+                  Four in a Row as the player more often than not can just stack chips and complete four in a row without resistance. Four in a Row
+                  is a solved game and with perfect play always results in a win for the player going first. Even so it does not matter when playing
+                  the random AI as the amount of possible moves is simply too vast to consistently luck out in chosing good moves.             
+                </p>
+                <p>
+                  This AI should not win a single game against a trying opponent. And it is possibly harder to lose or draw a game against.
+                </p>
+              </div>
+          </div>
+        % elif game.get_ai_name_text() == "Alpha-Beta Pruning AI":
+          <div class="columns is-hidden" id="show-div">
             <div class="content C-ai-explanation">
               <h1>
-                Lorem Ipsum
+                Alpha-Beta Pruning AI
               </h1>
               <p>  
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis laoreet nisi, bibendum venenatis ligula. Nunc id risus ligula. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse maximus sagittis ante, at posuere lorem tempor non. Nunc pellentesque, velit eget laoreet aliquam, nulla nibh maximus lorem, id blandit arcu arcu sed lacus. Nam eu leo est. In elementum orci condimentum lacinia pellentesque. Cras at vulputate elit, vel fringilla leo. Donec ac molestie lacus, vel dictum orci.
-                
-                Nam auctor dolor sit amet nunc finibus, porttitor fringilla urna facilisis. Integer sollicitudin id turpis non bibendum. Proin luctus ac ante sit amet auctor. Donec diam mi, sagittis sed consequat sit amet, sodales at arcu. Curabitur ultricies ut odio vel semper. Integer tincidunt justo sed lobortis tincidunt. Cras ac lobortis dolor.
-                
-                Phasellus feugiat a massa at accumsan. Nulla nec fermentum sapien. Proin libero ligula, ullamcorper imperdiet turpis quis, lobortis commodo massa. Sed facilisis elit id tincidunt aliquam. Praesent finibus mattis vestibulum. Sed tristique, nibh vel dictum venenatis, arcu augue cursus erat, non sollicitudin velit ipsum id nisl. Vestibulum et justo auctor, ullamcorper mi vitae, mollis enim. Duis eu tristique ex. Pellentesque non nisl ut massa ullamcorper accumsan.
-                
-                Proin eleifend felis at tincidunt molestie. Suspendisse felis enim, consequat et convallis a, pretium sed enim. Nullam posuere mollis dui, a dictum metus placerat a. Fusce sollicitudin, sem id fringilla blandit, urna metus scelerisque lacus, vel pellentesque felis urna vel quam. Nullam tristique nulla a dui maximus, vel feugiat ipsum tempor. Mauris a nulla sem. Etiam ex ante, feugiat quis cursus sit amet, sagittis in lorem. Nulla facilisi. Quisque a sollicitudin nibh. Nullam sit amet sapien ac sem rutrum tempor non vitae velit. Vestibulum id mollis justo, in ullamcorper erat. Phasellus viverra risus augue, at ornare dolor feugiat quis. Nunc semper sagittis enim, vel tristique urna tristique id. Curabitur placerat purus sit amet nibh maximus venenatis. Integer blandit ante quis euismod molestie.
-                
-                Vestibulum risus arcu, pretium ultrices massa a, ullamcorper tempor dolor. Nunc urna eros, maximus at semper quis, malesuada et ipsum. Nullam sit amet lacus mi. Aenean in efficitur urna. Aenean placerat efficitur volutpat. Etiam vulputate lectus nec leo venenatis porttitor. Curabitur aliquam efficitur erat, nec laoreet metus sagittis sed. Nullam finibus lacinia justo, vitae molestie est. Vestibulum ex quam, imperdiet nec molestie ac, rutrum id urna. Pellentesque neque justo, pretium et tincidunt ut, sodales vel nulla.
+                Alpha-Beta Pruning is an optimization of the minmax algorithm (for explanation of the minmax algorithm see the Minmax AI in Three in a Row)
+                that is usefull for larger games where the amount of board states we need to evaluate is very big. It improves upon the minmax algorithm by
+                factoring in that the maximizing player does not need to evaluate further moves if there is a minimizing player in the decision tree above him
+                that has a move available with lower value than the value of the current move the maximizer is considering (meaning the minimizing player will
+                choose the available move of lower value no matter what the maximizing player does) and realizing any further calculations are pointless.
+                Similar can be done for the minimizing player. Another factor that we need to consider due to the size of the decision tree is that we need to
+                evaluate positions which do not necessarily have a finished game via the use of an evaluation function.
+              </p>
+              <p>
+                Many improvements can still be made to this instance of the Alpha-Beta Pruning implementation. Mainly we could memorize positions we have already evaluated,
+                consider move transpositions and mirrored board states. Using Python also has a very noticable impact as it is considerably slower than other programming languages.
               </p>
             </div>
-        </div>
+          </div>
+        % end
         <!-- End of AI Select -->    
 
     </div>

@@ -114,24 +114,57 @@
     
         </div>
     
-        <div class="columns is-hidden" id="show-div">
+        % if game.get_ai_name_text() == "Random AI":
+          <div class="columns is-hidden" id="show-div">
+              <div class="content C-ai-explanation">
+                <h1>
+                  Random AI
+                </h1>
+                <p> 
+                  The simplest possible AI one can make in any game. While it can work in some games it is next to useless in the game of
+                  Three in a Row as the player more often than not can just win without much resistance. Since Three in a Row
+                  is a game with a very small amount of moves and with perfect play always ends in a draw this AI will be able to draw certain
+                  positions by pure luck but should never win when playing against any player over the age of 5.
+                </p>
+                <p>
+                  Simple improvements would include blocking the player if he can win in the next move and trying to make own moves in a way
+                  that strive for a three in row.
+                </p>
+              </div>
+          </div>
+        % elif game.get_ai_name_text() == "Minmax AI":
+          <div class="columns is-hidden" id="show-div">
             <div class="content C-ai-explanation">
               <h1>
-                Lorem Ipsum
+                Minmax AI
               </h1>
               <p>  
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis laoreet nisi, bibendum venenatis ligula. Nunc id risus ligula. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse maximus sagittis ante, at posuere lorem tempor non. Nunc pellentesque, velit eget laoreet aliquam, nulla nibh maximus lorem, id blandit arcu arcu sed lacus. Nam eu leo est. In elementum orci condimentum lacinia pellentesque. Cras at vulputate elit, vel fringilla leo. Donec ac molestie lacus, vel dictum orci.
-                
-                Nam auctor dolor sit amet nunc finibus, porttitor fringilla urna facilisis. Integer sollicitudin id turpis non bibendum. Proin luctus ac ante sit amet auctor. Donec diam mi, sagittis sed consequat sit amet, sodales at arcu. Curabitur ultricies ut odio vel semper. Integer tincidunt justo sed lobortis tincidunt. Cras ac lobortis dolor.
-                
-                Phasellus feugiat a massa at accumsan. Nulla nec fermentum sapien. Proin libero ligula, ullamcorper imperdiet turpis quis, lobortis commodo massa. Sed facilisis elit id tincidunt aliquam. Praesent finibus mattis vestibulum. Sed tristique, nibh vel dictum venenatis, arcu augue cursus erat, non sollicitudin velit ipsum id nisl. Vestibulum et justo auctor, ullamcorper mi vitae, mollis enim. Duis eu tristique ex. Pellentesque non nisl ut massa ullamcorper accumsan.
-                
-                Proin eleifend felis at tincidunt molestie. Suspendisse felis enim, consequat et convallis a, pretium sed enim. Nullam posuere mollis dui, a dictum metus placerat a. Fusce sollicitudin, sem id fringilla blandit, urna metus scelerisque lacus, vel pellentesque felis urna vel quam. Nullam tristique nulla a dui maximus, vel feugiat ipsum tempor. Mauris a nulla sem. Etiam ex ante, feugiat quis cursus sit amet, sagittis in lorem. Nulla facilisi. Quisque a sollicitudin nibh. Nullam sit amet sapien ac sem rutrum tempor non vitae velit. Vestibulum id mollis justo, in ullamcorper erat. Phasellus viverra risus augue, at ornare dolor feugiat quis. Nunc semper sagittis enim, vel tristique urna tristique id. Curabitur placerat purus sit amet nibh maximus venenatis. Integer blandit ante quis euismod molestie.
-                
-                Vestibulum risus arcu, pretium ultrices massa a, ullamcorper tempor dolor. Nunc urna eros, maximus at semper quis, malesuada et ipsum. Nullam sit amet lacus mi. Aenean in efficitur urna. Aenean placerat efficitur volutpat. Etiam vulputate lectus nec leo venenatis porttitor. Curabitur aliquam efficitur erat, nec laoreet metus sagittis sed. Nullam finibus lacinia justo, vitae molestie est. Vestibulum ex quam, imperdiet nec molestie ac, rutrum id urna. Pellentesque neque justo, pretium et tincidunt ut, sodales vel nulla.
+                Minmax (or minimax) is a very simple algorithm that can be very effective in games without many branching paths such as Three in a Row. It works by calculating all possible
+                continuations for every move and seeing whether it results in a win, loss or a draw for the computer. Such calculations are usually very costly as the amount of board states grows exponentially
+                with every additional move of look-ahead. To improve this calculations a .json file is used to save the best move in a positions if we have
+                already calculated it before. 
+              </p>
+              <p>
+                Minmax is a recursive algorithm for choosing the next move in a game. A value is associated with each position or state of the game.
+                This value is computed by a position evaluation function and it indicates how good it would be for a player to reach that position.
+                The computer then makes the move that maximizes the minimum value of the position resulting from the player's possible following moves.
+
+                In this instance a position with the computer as the winner has a value of +1, a win for the player has the value of -1 and a draw has a value of 0.
+                The value of any move for the computer is the maximum of the values resulting from each of player's possible replies.
+                In this instance the computer is the maximizing player and the player is the minimizing player, hence the name minmax algorithm.
+                                
+                The algorithm can be thought of as exploring the nodes of a game tree. The effective branching factor of the tree is the average number of children of each node (i.e., the average number of legal moves in a position).
+                The number of nodes to be explored usually increases exponentially with the number of plies. The number of nodes to be explored for the analysis of a game is therefore approximately the branching factor raised to the power of the number of plies.
+                It is therefore impractical to completely analyze game trees for games such as chess using the minmax algorithm but it is practical for the game of Three in a Row.
+              </p>
+              <p>
+                Three in a Row is a solved game and with such low possible move combinations this is in all intents and purposes a perfect AI and can only be
+                optimized by improving its calculating speed by reducing the amount of boards it evaluates by considering move transpositions, mirrored board states and the implementation of Alpha-Beta Pruning.
               </p>
             </div>
-        </div>
+          </div>
+        % end
+  
         <!-- End of AI Select -->
 
     </div>
