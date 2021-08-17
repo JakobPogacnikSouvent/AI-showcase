@@ -147,12 +147,12 @@
             <h1>
               Random AI
             </h1>
-            <p>  
+            <p class="C-justify">  
               The simplest possible AI that works by randomly selecting either Rock, Paper or Scissors.
               Interestingly enough since Rock, Paper, Scissors is a very simplistic game that can be in a vacumn perceived as random,
               such AI should have a 33% win rate, 33% loss rate and 33% draw rate against all oponents.
             </p>
-            <p>
+            <p class="C-justify">
               While this is a theoretically perfect AI when playing against computers, humans have some innate biases that can be exploited
               in the game of Rock, Paper, Scissors to write a better performing AI that predicts the player's actions.
             </p>
@@ -164,7 +164,7 @@
           <h1>
             Greedy AI
           </h1>
-          <p>  
+          <p class="C-justify">  
             The affectionately dubbed Greedy AI is an AI that uses the player's last played choice and uses it exclusively to predict
             the player's next move. The prediction works by exploiting the observations that human players are more likely to stick with
             the same choice if it brought them victory in a round while also being more likely to switch if they lost. Thus the AI predicts
@@ -172,13 +172,13 @@
             exploitable upon knowing how it works it should, in theory, proudce a higher win rate than random AI versus human oponents. Against
             a player that chooses their moves randomly this AI has no advantage.
           </p>
-          <p>
+          <p class="C-justify">
             A greedy algorithm in programming is any algorithm that follows the problem-solving heuristic of making the locally optimal choice at each stage.
             In other words it solves a big problem by chosing the best choice in each step of the way. This name has a slightly ironic conontation
             as this "Greedy" AI works not by chosing the optimal choice but by chosing what we hope is the optimal choice and thus avoiding the harder problem
             of predicting the player.
           </p>
-          <p>
+          <p class="C-justify">
             The winrate might be slightly increased if we figured out what humans are likely to switch to after drawing.
             The biggest flaw of this AI is that once its strategy is known to a human opponent its win rate drops to 0%
             as it has a deterministic algorithm.
@@ -191,13 +191,13 @@
           <h1>
             Average AI
           </h1>
-          <p>  
+          <p class="C-justify">  
             The Average AI works by exploiting the human tendency to pick the same choices over and over again. It works by saving all choices
             the player has ever made and calculating the percentage of times he has picked a certain item and then having that same probability
             to chose the wining item. As the algorithm is not deterministic the player gains no significant advantage from knowing how it works,
             but as all Rock, Paper, Scissors AI, still only has a 33% win rate against random oponents.
           </p>
-          <p>
+          <p class="C-justify">
             The AI could be improved by not only looking at the overall probability but by also taking into account the sequence of player's last
             choices and make a better prediction, but such improvements border on machine learning. As a last interesting sidenote, since the AI saves
             all games ever played by the player it is probably possible to crash the program or at least grow the player.json file to ridiculous

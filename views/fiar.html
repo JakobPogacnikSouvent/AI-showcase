@@ -134,13 +134,13 @@
                 <h1>
                   Random AI
                 </h1>
-                <p>  
+                <p class="C-justify">  
                   The simplest possible AI one can make in any game. While it can work in some games it is next to useless in the game of
                   Four in a Row as the player more often than not can just stack chips and complete four in a row without resistance. Four in a Row
                   is a solved game and with perfect play always results in a win for the player going first. Even so it does not matter when playing
                   the random AI as the amount of possible moves is simply too vast to consistently luck out in chosing good moves.             
                 </p>
-                <p>
+                <p class="C-justify">
                   This AI should not win a single game against a trying opponent. And it is possibly harder to lose or draw a game against.
                 </p>
               </div>
@@ -151,7 +151,7 @@
               <h1>
                 Alpha-Beta Pruning AI
               </h1>
-              <p>  
+              <p class="C-justify">  
                 Alpha-Beta Pruning is an optimization of the minmax algorithm (for explanation of the minmax algorithm see the Minmax AI in Three in a Row)
                 that is usefull for larger games where the amount of board states we need to evaluate is very big. It improves upon the minmax algorithm by
                 factoring in that the maximizing player does not need to evaluate further moves if there is a minimizing player in the decision tree above him
@@ -160,7 +160,7 @@
                 Similar can be done for the minimizing player. Another factor that we need to consider due to the size of the decision tree is that we need to
                 evaluate positions which do not necessarily have a finished game via the use of an evaluation function.
               </p>
-              <p>
+              <p class="C-justify">
                 Many improvements can still be made to this instance of the Alpha-Beta Pruning implementation. Mainly we could memorize positions we have already evaluated,
                 consider move transpositions and mirrored board states. Using Python also has a very noticable impact as it is considerably slower than other programming languages.
               </p>

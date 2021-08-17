@@ -120,13 +120,13 @@
                 <h1>
                   Random AI
                 </h1>
-                <p> 
+                <p class="C-justify"> 
                   The simplest possible AI one can make in any game. While it can work in some games it is next to useless in the game of
                   Three in a Row as the player more often than not can just win without much resistance. Since Three in a Row
                   is a game with a very small amount of moves and with perfect play always ends in a draw this AI will be able to draw certain
                   positions by pure luck but should never win when playing against any player over the age of 5.
                 </p>
-                <p>
+                <p class="C-justify">
                   Simple improvements would include blocking the player if he can win in the next move and trying to make own moves in a way
                   that strive for a three in row.
                 </p>
@@ -138,13 +138,13 @@
               <h1>
                 Minmax AI
               </h1>
-              <p>  
+              <p class="C-justify">  
                 Minmax (or minimax) is a very simple algorithm that can be very effective in games without many branching paths such as Three in a Row. It works by calculating all possible
                 continuations for every move and seeing whether it results in a win, loss or a draw for the computer. Such calculations are usually very costly as the amount of board states grows exponentially
                 with every additional move of look-ahead. To improve this calculations a .json file is used to save the best move in a positions if we have
                 already calculated it before. 
               </p>
-              <p>
+              <p class="C-justify">
                 Minmax is a recursive algorithm for choosing the next move in a game. A value is associated with each position or state of the game.
                 This value is computed by a position evaluation function and it indicates how good it would be for a player to reach that position.
                 The computer then makes the move that maximizes the minimum value of the position resulting from the player's possible following moves.
@@ -157,7 +157,7 @@
                 The number of nodes to be explored usually increases exponentially with the number of plies. The number of nodes to be explored for the analysis of a game is therefore approximately the branching factor raised to the power of the number of plies.
                 It is therefore impractical to completely analyze game trees for games such as chess using the minmax algorithm but it is practical for the game of Three in a Row.
               </p>
-              <p>
+              <p class="C-justify">
                 Three in a Row is a solved game and with such low possible move combinations this is in all intents and purposes a perfect AI and can only be
                 optimized by improving its calculating speed by reducing the amount of boards it evaluates by considering move transpositions, mirrored board states and the implementation of Alpha-Beta Pruning.
               </p>
