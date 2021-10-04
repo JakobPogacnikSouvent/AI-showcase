@@ -486,7 +486,7 @@ class TIAR(GameTemplate): # Three In A Row
                 s += str(value)
         return s
 
-    def _find_best_move(self, board, player, depth=3):
+    def _find_best_move(self, board, player, depth=10):
         try:
             with open('tiar_ai.json') as File:
                 data_dict = json.load(File)
@@ -571,7 +571,7 @@ class FIAR(GameTemplate):
     def _alpha_beta_pruning_AI(self):
         board = deepcopy(self.board)
         column, _ = self._maximize(board, -100, 100, 5)
-
+        print(column)
         return self.play(2, column)
 
     # CPU maximizes
@@ -712,7 +712,7 @@ class FIAR(GameTemplate):
     def _make_move(self, player, col, board):
         column = board[col]
         for row in range(len(column)):
-            if column[row] == 0:
+            if column[row] == 0: 
                 column[row] = player # column is a reference so this will mutate board
 
                 return (col, row)
